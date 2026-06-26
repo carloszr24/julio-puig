@@ -16,7 +16,7 @@ export default function AvisoLegalPage() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 md:px-10 py-16 prose prose-stone prose-sm max-w-none">
+      <div className="max-w-3xl mx-auto px-6 md:px-10 py-16 prose prose-stone prose-sm max-w-none text-justify">
         <section className="mb-10">
           <h2 className="font-display text-2xl text-stone-900 mb-4">Titular del sitio web</h2>
           <p className="text-stone-600 leading-relaxed">

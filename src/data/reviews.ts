@@ -61,11 +61,6 @@ export const REVIEWS: Review[] = [
     text: 'Gracias a la capacidad mediadora de Ángel pudimos llevar a cabo una venta complicada. Además encontró pronto un comprador y lo hizo todo fácil y rápido. Muy profesional en todo el proceso, facilitando la comunicación e involucrándose para que todo fuera bien.',
   },
   {
-    id: 12,
-    name: 'Barrabal Enred',
-    text: 'Ángel nos brindó una guía excepcional durante la compra de nuestra primera vivienda. Su conocimiento del mercado y su enfoque personalizado hicieron que el proceso fuera mucho más fácil de lo que esperábamos. Apreciamos su paciencia y claridad al explicar cada paso. ¡Sin duda los recomendamos!',
-  },
-  {
     id: 13,
     name: 'Edwin',
     text: 'Muy buena experiencia con Ángel: he vendido mi piso con total transparencia y atento en todo momento. Te guía para realizar los trámites pertinentes, te acompaña en cada paso, muy buen trato y excelente trabajo. Los recomiendo al 100%.',
@@ -79,5 +74,55 @@ export const REVIEWS: Review[] = [
     id: 15,
     name: 'Rayco Araña',
     text: 'Recomendada sin duda. Ángel, ante cualquier problema, no duda en hacer lo mejor para el cliente.',
+  },
+  {
+    id: 16,
+    name: 'Carmen R.',
+    text: 'Vendimos nuestro piso con YMAR y el proceso fue mucho más sencillo de lo que esperábamos. Ángel estuvo pendiente de cada detalle, nos explicó todo con claridad y supo mediar con el comprador en los momentos clave. Muy recomendable.',
+  },
+  {
+    id: 17,
+    name: 'Antonio García',
+    text: 'Llevaba meses buscando piso y con Ángel encontramos la vivienda adecuada en poco tiempo. Trato cercano, respuestas rápidas y mucha honestidad en todo momento. Una inmobiliaria de confianza.',
+  },
+  {
+    id: 18,
+    name: 'Laura M.',
+    text: 'Compramos nuestra primera vivienda con su ayuda y nos sentimos acompañados en cada paso. Resolvió dudas de financiación, visitas y documentación sin prisas y con mucha paciencia. Da gusto trabajar con alguien tan implicado.',
+  },
+  {
+    id: 19,
+    name: 'Francisco J.',
+    text: 'Profesional serio y muy humano. Nos ayudó a vender un local comercial con una negociación complicada y siempre buscó la mejor solución para todas las partes. Repetiría sin dudarlo.',
+  },
+  {
+    id: 20,
+    name: 'Patricia S.',
+    text: 'Destaco la transparencia y la rapidez. En menos de dos meses cerramos la operación de compraventa y en todo momento supimos en qué punto estábamos. Muy buen servicio.',
+  },
+  {
+    id: 21,
+    name: 'Rubén L.',
+    text: 'Ángel conoce muy bien el mercado de la zona y eso se nota desde la primera visita. Nos orientó sobre el precio real del inmueble y nos ayudó a tomar una decisión con tranquilidad.',
+  },
+  {
+    id: 22,
+    name: 'Sonia V.',
+    text: 'Excelente trato y gran disponibilidad. Tuvimos que hacer la operación con poco margen de tiempo y él se adaptó a nuestros horarios y plazos sin problema. Muy agradecidos.',
+  },
+  {
+    id: 23,
+    name: 'Miguel Ángel P.',
+    text: 'Recomiendo YMAR Inmobiliaria por su profesionalidad y por el trato personalizado. No te dejan solo en ningún momento del proceso y eso, en una compra de vivienda, marca la diferencia.',
+  },
+  {
+    id: 24,
+    name: 'Isabel C.',
+    text: 'Alquilamos un piso a través de ellos y la gestión fue impecable: contrato, inventario y comunicación con el propietario siempre claros. Un servicio de diez.',
+  },
+  {
+    id: 25,
+    name: 'David H.',
+    text: 'Muy satisfechos con la venta de nuestra casa. Ángel supo valorar correctamente el inmueble, presentó compradores serios y nos acompañó hasta la firma en notaría. Totalmente recomendable.',
   },
 ]

@@ -141,7 +141,7 @@ export function ReviewsCarousel() {
             {[
               { value: '+500', label: 'propiedades vendidas' },
               { value: '< 60 días', label: 'tiempo medio de cierre' },
-              { value: '4,9 / 5', label: 'estrellas en Google (43 reseñas)' },
+              { value: '4,9 / 5', label: 'estrellas en Google' },
             ].map((stat, idx) => (
               <div
                 key={stat.label}

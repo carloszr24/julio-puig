@@ -27,7 +27,8 @@ export default function PropiedadesPage({
     <div className="pt-24 md:pt-[8.5rem]">
       <div className="border-b border-stone-100">
         <div className="max-w-7xl mx-auto px-6 md:px-10 py-10">
-          <h1 className="font-display text-4xl font-semibold text-stone-900">Propiedades</h1>
+          <p className="text-gold text-xs tracking-[0.3em] uppercase mb-4">Propiedades</p>
+          <h1 className="font-display text-4xl md:text-5xl font-semibold text-stone-900">Propiedades</h1>
           <p className="mt-2 text-sm text-stone-500">
             {properties.length} inmueble{properties.length !== 1 ? 's' : ''} disponible
             {properties.length !== 1 ? 's' : ''}

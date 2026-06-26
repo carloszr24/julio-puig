@@ -164,9 +164,10 @@ export default async function HomePage() {
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/contacto"
-              className="inline-flex min-h-[3rem] items-center justify-center rounded-md border border-transparent bg-white px-10 py-3 text-sm font-medium tracking-wide text-brand-red hover:bg-rose-50 transition-colors duration-200"
+              className="inline-flex min-h-[3rem] items-center justify-center gap-1.5 rounded-md border border-transparent bg-white px-10 py-3 text-sm font-medium tracking-wide text-brand-red hover:bg-rose-50 transition-colors duration-200"
             >
-              Habla con{' '}<BrandName />
+              <span>Habla con</span>
+              <BrandName />
             </Link>
             <Link
               href="/propiedades"

@@ -28,7 +28,10 @@ export function Footer() {
               className={LOGO_IMAGE_CLASS}
             />
             <p className="mt-4 text-sm leading-relaxed text-stone-300 max-w-md">
-              {AGENT.tagline} Oficina principal en Móstoles; operamos en todo el territorio nacional.
+              Oficinas en Móstoles, Madrid.
+              <br />
+              <br />
+              Más de 30 años de experiencia en compra, venta y alquiler de pisos, oficinas, naves y terrenos por todo el territorio nacional.
             </p>
           </div>
           <div>

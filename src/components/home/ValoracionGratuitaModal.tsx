@@ -205,7 +205,7 @@ export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 
                   <h3 className="lead-modal-title">¿Quieres saber cuánto vale tu casa?</h3>
                   <p className="lead-modal-subtitle">
                     Completa los datos y te haremos una valoración completa de tu inmueble sin compromiso.
-                    Además, si vendes con nosotros te obsequiaremos el certificado energético obligatorio.
+                    Además, si vendes con nosotros te regalamos el certificado energético obligatorio.
                   </p>
                 </div>
 

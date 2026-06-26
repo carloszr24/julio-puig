@@ -200,7 +200,7 @@ export default async function PropertyDetailPage({
                     rel="noopener noreferrer"
                     className="w-full block text-center text-sm py-4 border border-brand-red text-brand-red hover:bg-brand-red hover:text-white transition-colors duration-200"
                   >
-                    Ver en Fotocasa ↗
+                    Ver en portal inmobiliario ↗
                   </a>
                 )}
                 <a
