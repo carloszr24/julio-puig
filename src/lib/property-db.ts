@@ -1,4 +1,9 @@
 import type { Property } from '@/types'
+import { createAdminSupabase } from '@/lib/supabase/admin'
+
+export function isSupabaseConfigured(): boolean {
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY)
+}
 
 function normalizeExternalUrl(value?: string | null): string | null {
   if (!value) return null
@@ -196,4 +201,86 @@ export function bodyToInsert(body: {
       : null,
     featured: Boolean(body.featured),
   }
+}
+
+export function slugifyTitle(title: string): string {
+  const base = title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 72)
+  return base || `propiedad-${Date.now()}`
+}
+
+async function uniquePropertyId(base: string): Promise<string> {
+  const supabase = createAdminSupabase()
+  let candidate = base
+  let n = 2
+  while (true) {
+    const { data } = await supabase.from('properties').select('id').eq('id', candidate).maybeSingle()
+    if (!data) return candidate
+    candidate = `${base}-${n}`
+    n += 1
+  }
+}
+
+export async function listPropertyRows(): Promise<PropertyRow[]> {
+  const supabase = createAdminSupabase()
+  const { data, error } = await supabase
+    .from('properties')
+    .select('*')
+    .order('created_at', { ascending: false })
+  if (error) throw new Error(error.message)
+  return (data ?? []) as PropertyRow[]
+}
+
+export async function getPropertyRowById(id: string): Promise<PropertyRow | null> {
+  const supabase = createAdminSupabase()
+  const { data, error } = await supabase.from('properties').select('*').eq('id', id).maybeSingle()
+  if (error) throw new Error(error.message)
+  return (data as PropertyRow | null) ?? null
+}
+
+export async function createPropertyRow(insert: PropertyInsert, titleForSlug: string): Promise<PropertyRow> {
+  const supabase = createAdminSupabase()
+  const id = await uniquePropertyId(slugifyTitle(titleForSlug))
+  const { data, error } = await supabase
+    .from('properties')
+    .insert({ ...insert, id })
+    .select('*')
+    .single()
+  if (error) throw new Error(error.message)
+  return data as PropertyRow
+}
+
+export async function updatePropertyRow(id: string, insert: PropertyInsert): Promise<PropertyRow> {
+  const supabase = createAdminSupabase()
+  const { data, error } = await supabase
+    .from('properties')
+    .update({ ...insert, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select('*')
+    .single()
+  if (error) throw new Error(error.message)
+  return data as PropertyRow
+}
+
+export async function deletePropertyRow(id: string): Promise<void> {
+  const supabase = createAdminSupabase()
+  const { error } = await supabase.from('properties').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+}
+
+export async function assertFeaturedHomeLimit(
+  wantFeatured: boolean,
+  editingPropertyId: string | null
+): Promise<string | null> {
+  if (!wantFeatured) return null
+  const rows = await listPropertyRows()
+  if (wouldExceedFeaturedHomeLimit(rows, { wantFeatured, editingPropertyId })) {
+    return `Solo puedes tener ${MAX_FEATURED_ON_HOME} destacadas en la home. Quita la marca en otra propiedad primero.`
+  }
+  return null
 }

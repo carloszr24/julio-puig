@@ -1,5 +1,13 @@
 import { DEMO_PROPERTIES } from '@/data/properties'
-import { isFeaturedFlag, MAX_FEATURED_ON_HOME } from '@/lib/property-db'
+import {
+  getPropertyRowById,
+  isFeaturedFlag,
+  isSupabaseConfigured,
+  listPropertyRows,
+  MAX_FEATURED_ON_HOME,
+  rowsToProperties,
+  rowToProperty,
+} from '@/lib/property-db'
 import type { Property } from '@/types'
 import type { PropertyFilters } from '@/types'
 
@@ -62,12 +70,26 @@ function parseExtrasParam(extras?: string, legacyExtra?: string): string[] {
   return legacyExtra ? [legacyExtra] : []
 }
 
-export function getAllProperties(): Property[] {
-  return [...DEMO_PROPERTIES].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+function sortByDate(properties: Property[]): Property[] {
+  return [...properties].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 }
 
-export function getPropertyById(id: string): Property | undefined {
-  return DEMO_PROPERTIES.find((p) => p.id === id)
+function demoCatalog(): Property[] {
+  return sortByDate(DEMO_PROPERTIES)
+}
+
+export async function getAllProperties(): Promise<Property[]> {
+  if (!isSupabaseConfigured()) return demoCatalog()
+  const rows = await listPropertyRows()
+  return rowsToProperties(rows)
+}
+
+export async function getPropertyById(id: string): Promise<Property | undefined> {
+  if (!isSupabaseConfigured()) {
+    return DEMO_PROPERTIES.find((p) => p.id === id)
+  }
+  const row = await getPropertyRowById(id)
+  return row ? rowToProperty(row) : undefined
 }
 
 export function filterProperties(
@@ -117,13 +139,14 @@ export function filterProperties(
   return list
 }
 
-export function getFeaturedPropertiesForHome(): Property[] {
-  const featured = DEMO_PROPERTIES.filter((p) => isFeaturedFlag(p.featured))
+export async function getFeaturedPropertiesForHome(): Promise<Property[]> {
+  const catalog = await getAllProperties()
+  const featured = catalog.filter((p) => isFeaturedFlag(p.featured))
   if (featured.length >= MAX_FEATURED_ON_HOME) {
     return featured.slice(0, MAX_FEATURED_ON_HOME)
   }
   const fill = [...featured]
-  for (const p of DEMO_PROPERTIES) {
+  for (const p of catalog) {
     if (fill.length >= MAX_FEATURED_ON_HOME) break
     if (!fill.some((x) => x.id === p.id)) fill.push(p)
   }

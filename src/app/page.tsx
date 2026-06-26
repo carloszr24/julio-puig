@@ -37,7 +37,7 @@ function HandshakeIcon() {
 }
 
 export default async function HomePage() {
-  const featured = getFeaturedPropertiesForHome()
+  const featured = await getFeaturedPropertiesForHome()
 
   return (
     <>

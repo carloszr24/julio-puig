@@ -16,12 +16,12 @@ interface SearchParams {
   province?: string
 }
 
-export default function PropiedadesPage({
+export default async function PropiedadesPage({
   searchParams,
 }: {
   searchParams: SearchParams
 }) {
-  const properties = filterProperties(getAllProperties(), searchParams)
+  const properties = filterProperties(await getAllProperties(), searchParams)
 
   return (
     <div className="pt-24 md:pt-[8.5rem]">
