@@ -6,7 +6,6 @@ import {
   BATHROOM_FILTER_OPTIONS,
   BEDROOM_FILTER_OPTIONS,
   PROPERTY_OPERATIONS,
-  PROPERTY_PROVINCES,
   PROPERTY_STATUSES,
   PROPERTY_TYPES,
   OPERATION_LABELS,
@@ -47,7 +46,7 @@ function parseSelectedExtras(extras: string | null, legacyExtra: string | null):
   return legacyExtra ? [legacyExtra] : []
 }
 
-export function PropertyFilters() {
+export function PropertyFilters({ availableProvinces }: { availableProvinces: string[] }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -157,17 +156,19 @@ export function PropertyFilters() {
               </select>
             </div>
 
-            <div>
-              <label className="text-xs text-stone-500 mb-1.5 block">Provincia</label>
-              <select value={province} onChange={(e) => updateParam('province', e.target.value)} className={selectClass}>
-                <option value="">Todas</option>
-                {PROPERTY_PROVINCES.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {availableProvinces.length > 0 && (
+              <div>
+                <label className="text-xs text-stone-500 mb-1.5 block">Provincia</label>
+                <select value={province} onChange={(e) => updateParam('province', e.target.value)} className={selectClass}>
+                  <option value="">Todas</option>
+                  {availableProvinces.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div>
               <label className="text-xs text-stone-500 mb-1.5 block">Habitaciones</label>

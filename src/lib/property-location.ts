@@ -9,3 +9,14 @@ export function getPropertyProvince(property: {
 }): string | null {
   return property.province?.trim() || extractProvinceFromLocation(property.location)
 }
+
+export function listProvincesFromProperties(
+  properties: { province?: string | null; location: string }[]
+): string[] {
+  const provinces = new Set<string>()
+  for (const property of properties) {
+    const province = getPropertyProvince(property)
+    if (province) provinces.add(province)
+  }
+  return Array.from(provinces).sort((a, b) => a.localeCompare(b, 'es'))
+}

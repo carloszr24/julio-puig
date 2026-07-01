@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { filterProperties, getAllProperties } from '@/lib/properties-store'
+import { listProvincesFromProperties } from '@/lib/property-location'
 import { PropertyCard } from '@/components/properties/PropertyCard'
 import { PropertyFilters } from '@/components/properties/PropertyFilters'
 
@@ -23,7 +24,9 @@ export default async function PropiedadesPage({
 }: {
   searchParams: SearchParams
 }) {
-  const properties = filterProperties(await getAllProperties(), searchParams)
+  const allProperties = await getAllProperties()
+  const availableProvinces = listProvincesFromProperties(allProperties)
+  const properties = filterProperties(allProperties, searchParams)
 
   return (
     <div className="pt-24 md:pt-[8.5rem]">
@@ -39,7 +42,7 @@ export default async function PropiedadesPage({
       </div>
 
       <Suspense fallback={<div className="skeleton h-40 w-full" />}>
-        <PropertyFilters />
+        <PropertyFilters availableProvinces={availableProvinces} />
       </Suspense>
 
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-14">
