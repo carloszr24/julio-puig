@@ -73,6 +73,7 @@ export default function AdminPage() {
 
   const [properties, setProperties] = useState<Property[]>([])
   const [adminProvinceFilter, setAdminProvinceFilter] = useState('')
+  const [adminArchiveFilter, setAdminArchiveFilter] = useState<'active' | 'archived' | 'all'>('active')
   const [loading, setLoading] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -80,7 +81,7 @@ export default function AdminPage() {
   const [imageItems, setImageItems] = useState<ImageItem[]>([])
   const [initialImageUrls, setInitialImageUrls] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
-  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [archiveConfirm, setArchiveConfirm] = useState<{ id: string; action: 'archive' | 'restore' } | null>(null)
   const [featuredCapError, setFeaturedCapError] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [pwErrorMsg, setPwErrorMsg] = useState<string | null>(null)
@@ -154,7 +155,7 @@ export default function AdminPage() {
       if (name === 'featured') {
         if (checked) {
           const selfFeatured = editingId ? properties.some((p) => p.id === editingId && p.featured) : false
-          const nFeatured = properties.filter((p) => p.featured).length
+          const nFeatured = properties.filter((p) => p.featured && !p.archived).length
           if (!selfFeatured && nFeatured >= MAX_FEATURED_ON_HOME) {
             setFeaturedCapError(
               `Solo puedes tener ${MAX_FEATURED_ON_HOME} destacadas en la home. Quita la marca en otra propiedad primero.`
@@ -362,9 +363,14 @@ export default function AdminPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    await fetch(`/api/propiedades/${id}`, { method: 'DELETE', credentials: 'include' })
-    setDeleteId(null)
+  const handleArchive = async (id: string, archived: boolean) => {
+    await fetch(`/api/propiedades/${id}/archive`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ archived }),
+    })
+    setArchiveConfirm(null)
     await fetchProperties()
   }
 
@@ -374,13 +380,17 @@ export default function AdminPage() {
     return b.createdAt.getTime() - a.createdAt.getTime()
   })
 
-  const visibleProperties = adminProvinceFilter
-    ? sortedProperties.filter((p) => getPropertyProvince(p) === adminProvinceFilter)
-    : sortedProperties
+  const visibleProperties = sortedProperties
+    .filter((property) => {
+      if (adminArchiveFilter === 'active') return !property.archived
+      if (adminArchiveFilter === 'archived') return property.archived
+      return true
+    })
+    .filter((property) => !adminProvinceFilter || getPropertyProvince(property) === adminProvinceFilter)
 
   const moveProperty = async (id: string, direction: 'up' | 'down') => {
-    if (adminProvinceFilter) return
-    const ordered = [...sortedProperties]
+    if (adminProvinceFilter || adminArchiveFilter !== 'active') return
+    const ordered = sortedProperties.filter((property) => !property.archived)
     const index = ordered.findIndex((property) => property.id === id)
     if (index < 0) return
     const swapIndex = direction === 'up' ? index - 1 : index + 1
@@ -450,6 +460,18 @@ export default function AdminPage() {
           <p className="text-stone-400 text-sm mt-1">{visibleProperties.length} inmueble{visibleProperties.length !== 1 ? 's' : ''} en total</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          <label className="flex items-center gap-2 text-xs text-stone-500">
+            Visibilidad
+            <select
+              value={adminArchiveFilter}
+              onChange={(e) => setAdminArchiveFilter(e.target.value as 'active' | 'archived' | 'all')}
+              className="border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 focus:outline-none focus:border-stone-900"
+            >
+              <option value="active">Publicadas</option>
+              <option value="archived">Archivadas</option>
+              <option value="all">Todas</option>
+            </select>
+          </label>
           <label className="flex items-center gap-2 text-xs text-stone-500">
             Provincia
             <select
@@ -749,14 +771,16 @@ export default function AdminPage() {
 
       {/* TABLE */}
       <div className="bg-white border border-stone-200 overflow-hidden">
-        {!adminProvinceFilter && properties.length > 1 && (
+        {!adminProvinceFilter && adminArchiveFilter === 'active' && properties.filter((p) => !p.archived).length > 1 && (
           <p className="border-b border-stone-100 px-4 py-2.5 text-xs text-stone-500">
             Usa las flechas para cambiar el orden en la página de propiedades. Las nuevas se añaden al final.
           </p>
         )}
-        {adminProvinceFilter && (
+        {(adminProvinceFilter || adminArchiveFilter !== 'active') && (
           <p className="border-b border-stone-100 px-4 py-2.5 text-xs text-stone-400">
-            Quita el filtro de provincia para reordenar el catálogo.
+            {adminArchiveFilter !== 'active'
+              ? 'Muestra solo publicadas para reordenar el catálogo.'
+              : 'Quita el filtro de provincia para reordenar el catálogo.'}
           </p>
         )}
         {loading ? (
@@ -795,7 +819,7 @@ export default function AdminPage() {
                         <button
                           type="button"
                           onClick={() => moveProperty(p.id, 'up')}
-                          disabled={reordering || adminProvinceFilter !== '' || index === 0}
+                          disabled={reordering || adminProvinceFilter !== '' || adminArchiveFilter !== 'active' || index === 0}
                           className="h-7 w-7 border border-stone-200 text-stone-600 hover:bg-stone-100 disabled:opacity-30 disabled:cursor-not-allowed"
                           aria-label="Subir"
                         >
@@ -804,7 +828,7 @@ export default function AdminPage() {
                         <button
                           type="button"
                           onClick={() => moveProperty(p.id, 'down')}
-                          disabled={reordering || adminProvinceFilter !== '' || index === visibleProperties.length - 1}
+                          disabled={reordering || adminProvinceFilter !== '' || adminArchiveFilter !== 'active' || index === visibleProperties.length - 1}
                           className="h-7 w-7 border border-stone-200 text-stone-600 hover:bg-stone-100 disabled:opacity-30 disabled:cursor-not-allowed"
                           aria-label="Bajar"
                         >
@@ -816,6 +840,11 @@ export default function AdminPage() {
                       <span className="font-medium text-stone-900 line-clamp-1 max-w-[200px] block">
                         {p.title}
                       </span>
+                      {p.archived && (
+                        <span className="mt-1 inline-block text-[10px] uppercase tracking-wide text-stone-500 bg-stone-100 px-1.5 py-0.5">
+                          Archivada
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-stone-600 whitespace-nowrap">
                       {formatPrice(p.price, p.operation)}
@@ -848,12 +877,21 @@ export default function AdminPage() {
                         >
                           Editar
                         </button>
-                        <button
-                          onClick={() => setDeleteId(p.id)}
-                          className="text-xs text-red-400 hover:text-red-600 transition-colors"
-                        >
-                          Borrar
-                        </button>
+                        {p.archived ? (
+                          <button
+                            onClick={() => setArchiveConfirm({ id: p.id, action: 'restore' })}
+                            className="text-xs text-emerald-600 hover:text-emerald-800 transition-colors"
+                          >
+                            Reactivar
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setArchiveConfirm({ id: p.id, action: 'archive' })}
+                            className="text-xs text-stone-500 hover:text-stone-800 transition-colors"
+                          >
+                            Archivar
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -864,23 +902,26 @@ export default function AdminPage() {
         )}
       </div>
 
-      {/* Delete confirmation modal */}
-      {deleteId && (
+      {archiveConfirm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-6">
           <div className="bg-white p-8 max-w-sm w-full">
-            <h3 className="font-medium text-stone-900 mb-2">¿Confirmar eliminación?</h3>
+            <h3 className="font-medium text-stone-900 mb-2">
+              {archiveConfirm.action === 'archive' ? '¿Archivar propiedad?' : '¿Reactivar propiedad?'}
+            </h3>
             <p className="text-stone-500 text-sm mb-6">
-              Esta acción no se puede deshacer.
+              {archiveConfirm.action === 'archive'
+                ? 'Dejará de mostrarse en la web, pero conservarás todos los datos para reactivarla cuando quieras.'
+                : 'Volverá a mostrarse en la web pública.'}
             </p>
             <div className="flex gap-3">
               <button
-                onClick={() => handleDelete(deleteId)}
+                onClick={() => handleArchive(archiveConfirm.id, archiveConfirm.action === 'archive')}
                 className="btn-primary text-xs px-5 py-2.5"
               >
-                Eliminar
+                {archiveConfirm.action === 'archive' ? 'Archivar' : 'Reactivar'}
               </button>
               <button
-                onClick={() => setDeleteId(null)}
+                onClick={() => setArchiveConfirm(null)}
                 className="text-sm text-stone-500 hover:text-stone-900 transition-colors"
               >
                 Cancelar

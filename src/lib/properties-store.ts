@@ -1,6 +1,7 @@
 import { DEMO_PROPERTIES } from '@/data/properties'
 import {
   getPropertyRowById,
+  isArchivedFlag,
   isFeaturedFlag,
   isSupabaseConfigured,
   listFeaturedPropertyRows,
@@ -61,12 +62,19 @@ export async function getAllProperties(): Promise<Property[]> {
   return rowsToProperties(rows)
 }
 
+export async function getPublicProperties(): Promise<Property[]> {
+  const properties = await getAllProperties()
+  return properties.filter((property) => !property.archived)
+}
+
 export async function getPropertyById(id: string): Promise<Property | undefined> {
   if (!isSupabaseConfigured()) {
-    return DEMO_PROPERTIES.find((p) => p.id === id)
+    const property = DEMO_PROPERTIES.find((p) => p.id === id)
+    return property && !property.archived ? property : undefined
   }
   const row = await getPropertyRowById(id)
-  return row ? rowToProperty(row) : undefined
+  if (!row || isArchivedFlag(row.archived)) return undefined
+  return rowToProperty(row)
 }
 
 export function filterProperties(
@@ -119,7 +127,7 @@ export function filterProperties(
 export async function getFeaturedPropertiesForHome(): Promise<Property[]> {
   if (!isSupabaseConfigured()) {
     return demoCatalog()
-      .filter((p) => isFeaturedFlag(p.featured))
+      .filter((p) => isFeaturedFlag(p.featured) && !p.archived)
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
       .slice(0, MAX_FEATURED_ON_HOME)
   }

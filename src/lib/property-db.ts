@@ -25,6 +25,10 @@ export function isFeaturedFlag(value: unknown): boolean {
   return value === true || value === 'true' || value === 't' || value === 1
 }
 
+export function isArchivedFlag(value: unknown): boolean {
+  return value === true || value === 'true' || value === 't' || value === 1
+}
+
 /**
  * ¿Activar destacada superaría el cupo? Si esta fila ya es destacada, no ocupa “nuevo” cupo.
  */
@@ -68,6 +72,7 @@ export type PropertyRow = {
   emissions_rating: string | null
   emissions_value: number | null
   featured: boolean
+  archived: boolean
   sort_order: number
   created_at: string
   updated_at: string
@@ -104,6 +109,7 @@ export function rowToProperty(r: PropertyRow): Property {
     emissionsRating: r.emissions_rating,
     emissionsValue: r.emissions_value,
     featured: r.featured,
+    archived: isArchivedFlag(r.archived),
     sortOrder: r.sort_order ?? 0,
     createdAt: new Date(r.created_at),
     updatedAt: new Date(r.updated_at),
@@ -254,6 +260,7 @@ export async function listFeaturedPropertyRows(): Promise<PropertyRow[]> {
     .from('properties')
     .select('*')
     .eq('featured', true)
+    .eq('archived', false)
     .order('created_at', { ascending: true })
     .limit(MAX_FEATURED_ON_HOME)
   if (error) throw new Error(error.message)
@@ -331,13 +338,32 @@ export async function updatePropertySortOrders(ids: string[]): Promise<void> {
   if (failed?.error) throw new Error(failed.error.message)
 }
 
+export async function setPropertyArchived(id: string, archived: boolean): Promise<PropertyRow> {
+  const supabase = createAdminSupabase()
+  const update: { archived: boolean; featured?: boolean; updated_at: string } = {
+    archived,
+    updated_at: new Date().toISOString(),
+  }
+  if (archived) update.featured = false
+
+  const { data, error } = await supabase
+    .from('properties')
+    .update(update)
+    .eq('id', id)
+    .select('*')
+    .single()
+  if (error) throw new Error(error.message)
+  return data as PropertyRow
+}
+
 export async function assertFeaturedHomeLimit(
   wantFeatured: boolean,
   editingPropertyId: string | null
 ): Promise<string | null> {
   if (!wantFeatured) return null
   const rows = await listPropertyRows()
-  if (wouldExceedFeaturedHomeLimit(rows, { wantFeatured, editingPropertyId })) {
+  const activeRows = rows.filter((row) => !isArchivedFlag(row.archived))
+  if (wouldExceedFeaturedHomeLimit(activeRows, { wantFeatured, editingPropertyId })) {
     return `Solo puedes tener ${MAX_FEATURED_ON_HOME} destacadas en la home. Quita la marca en otra propiedad primero.`
   }
   return null

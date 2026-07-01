@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { filterProperties, getAllProperties } from '@/lib/properties-store'
+import { filterProperties, getPublicProperties } from '@/lib/properties-store'
 import { listProvincesFromProperties } from '@/lib/property-location'
 import { PropertyCard } from '@/components/properties/PropertyCard'
 import { PropertyFilters } from '@/components/properties/PropertyFilters'
@@ -24,7 +24,7 @@ export default async function PropiedadesPage({
 }: {
   searchParams: SearchParams
 }) {
-  const allProperties = await getAllProperties()
+  const allProperties = await getPublicProperties()
   const availableProvinces = listProvincesFromProperties(allProperties)
   const properties = filterProperties(allProperties, searchParams)
 
