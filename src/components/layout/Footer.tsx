@@ -83,9 +83,9 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t border-stone-800 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs text-stone-500">
-          <span>© {new Date().getFullYear()} {AGENT.name}. Todos los derechos reservados.</span>
-          <p className="md:max-w-xl md:text-right leading-relaxed text-stone-500">
+        <div className="border-t border-stone-800 pt-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 text-xs text-stone-500">
+          <span className="shrink-0">© {new Date().getFullYear()} {AGENT.name}. Todos los derechos reservados.</span>
+          <p className="text-[10px] leading-snug text-stone-500 lg:whitespace-nowrap lg:text-right">
             Toda la información contenida en esta web carece de carácter contractual, siendo su contenido meramente informativo.
           </p>
         </div>
