@@ -4,12 +4,14 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   LEAD_INTENT_LABELS,
   LEAD_SOURCE_LABELS,
+  LEAD_STATUSES,
   LEAD_STATUS_LABELS,
 } from '@/lib/leads'
 import { cn } from '@/lib/utils'
-import type { Lead, LeadSource } from '@/types'
+import type { Lead, LeadSource, LeadStatus } from '@/types'
 
 type SourceFilter = 'all' | 'web_contacto' | 'web_valoracion'
+type StatusFilter = 'all' | LeadStatus
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short' }).format(date)
@@ -66,6 +68,7 @@ export default function AdminLeadsPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -180,9 +183,15 @@ export default function AdminLeadsPage() {
   }
 
   const filteredLeads = useMemo(() => {
-    const list = sourceFilter === 'all' ? leads : leads.filter((lead) => lead.source === sourceFilter)
+    let list = leads
+    if (sourceFilter !== 'all') {
+      list = list.filter((lead) => lead.source === sourceFilter)
+    }
+    if (statusFilter !== 'all') {
+      list = list.filter((lead) => lead.status === statusFilter)
+    }
     return [...list].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-  }, [leads, sourceFilter])
+  }, [leads, sourceFilter, statusFilter])
 
   const stats = useMemo(() => {
     const webLeads = leads.filter((l) => l.source === 'web_contacto' || l.source === 'web_valoracion')
@@ -263,26 +272,64 @@ export default function AdminLeadsPage() {
         </p>
       )}
 
-      <div className="flex flex-wrap gap-2">
-        {([
-          ['all', 'Todos'],
-          ['web_contacto', 'Contacto'],
-          ['web_valoracion', 'Valoración'],
-        ] as const).map(([value, label]) => (
-          <button
-            key={value}
-            type="button"
-            onClick={() => setSourceFilter(value)}
-            className={cn(
-              'text-xs px-4 py-2 border transition-colors',
-              sourceFilter === value
-                ? 'bg-stone-900 text-white border-stone-900'
-                : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400'
-            )}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="space-y-4">
+        <div>
+          <p className="text-[11px] text-stone-500 uppercase tracking-wide mb-2">Origen</p>
+          <div className="flex flex-wrap gap-2">
+            {([
+              ['all', 'Todos'],
+              ['web_contacto', 'Contacto'],
+              ['web_valoracion', 'Valoración'],
+            ] as const).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setSourceFilter(value)}
+                className={cn(
+                  'text-xs px-4 py-2 border transition-colors',
+                  sourceFilter === value
+                    ? 'bg-stone-900 text-white border-stone-900'
+                    : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400'
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <p className="text-[11px] text-stone-500 uppercase tracking-wide mb-2">Estado</p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setStatusFilter('all')}
+              className={cn(
+                'text-xs px-4 py-2 border transition-colors',
+                statusFilter === 'all'
+                  ? 'bg-stone-900 text-white border-stone-900'
+                  : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400'
+              )}
+            >
+              Todos
+            </button>
+            {LEAD_STATUSES.map((status) => (
+              <button
+                key={status}
+                type="button"
+                onClick={() => setStatusFilter(status)}
+                className={cn(
+                  'text-xs px-4 py-2 border transition-colors',
+                  statusFilter === status
+                    ? 'bg-stone-900 text-white border-stone-900'
+                    : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400'
+                )}
+              >
+                {LEAD_STATUS_LABELS[status]}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -293,9 +340,9 @@ export default function AdminLeadsPage() {
         </div>
       ) : filteredLeads.length === 0 ? (
         <div className="bg-white border border-stone-200 p-10 text-center">
-          <p className="text-stone-500 text-sm">Todavía no hay leads en este filtro.</p>
+          <p className="text-stone-500 text-sm">No hay leads con estos filtros.</p>
           <p className="text-stone-400 text-xs mt-2">
-            Cuando alguien envíe el formulario de contacto o la valoración gratuita, aparecerá aquí.
+            Prueba otro origen o estado, o espera nuevos envíos desde la web.
           </p>
         </div>
       ) : (
