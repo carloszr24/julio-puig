@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminSupabase } from '@/lib/supabase/admin'
 import { getAdminTokenFromRequest, verifyAdminSessionToken } from '@/lib/admin-session'
 import { LEAD_INTENTS, LEAD_PRIORITIES, LEAD_SOURCES, LEAD_STATUSES, rowsToLeads, type LeadRow } from '@/lib/leads'
+import { sendLeadNotificationEmail } from '@/lib/lead-notification'
 
 function unauthorized() {
   return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
@@ -73,7 +74,23 @@ export async function POST(request: NextRequest) {
 
     if (error) throw error
 
-    return NextResponse.json(rowsToLeads([data as LeadRow])[0], { status: 201 })
+    const lead = rowsToLeads([data as LeadRow])[0]
+    const emailResult = await sendLeadNotificationEmail({
+      full_name: fullName,
+      phone,
+      email,
+      source,
+      intent,
+      notes,
+      property_ref: propertyRef,
+      sale_timeline: saleTimeline,
+    })
+
+    if (!emailResult.ok) {
+      console.error('[api/leads] No se pudo enviar el email al equipo:', emailResult.error)
+    }
+
+    return NextResponse.json(lead, { status: 201 })
   } catch {
     return NextResponse.json({ error: 'Error al crear lead' }, { status: 500 })
   }
