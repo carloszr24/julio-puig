@@ -130,12 +130,12 @@ export default function SobreNosotrosPage() {
           <div className="my-14 h-px bg-stone-200" />
 
           <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
-            <div className="relative aspect-[4/5] overflow-hidden bg-stone-100">
+            <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
               <Image
                 src="/images/julio.jpg"
                 alt={LEGAL.ownerName}
                 fill
-                className="object-contain object-center"
+                className="object-cover object-[center_58%]"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
