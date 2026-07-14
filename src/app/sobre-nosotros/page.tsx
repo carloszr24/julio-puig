@@ -240,9 +240,12 @@ export default function SobreNosotrosPage() {
 
           <div className="mt-20">
             <p className="mb-3 text-[10px] font-light uppercase tracking-[0.22em] text-brand-burgundy">El equipo</p>
-            <h2 className="font-display text-3xl font-light text-stone-900 md:text-4xl">Personas, no departamentos</h2>
+            <h2 className="font-display text-3xl font-light text-stone-900 md:text-4xl">
+              Comprometidos a darle la solución que busca
+            </h2>
             <p className="mt-4 max-w-2xl text-sm font-light leading-relaxed text-stone-500 md:text-base">
-              Somos pocas personas, pero muy implicadas. Aquí irán las fotos del equipo en cuanto las tengamos.
+              Un equipo cercano, con experiencia en el mercado local. Las fotos del equipo las iremos
+              añadiendo poco a poco.
             </p>
 
             <ul className="mt-12 grid grid-cols-2 gap-10 md:grid-cols-4 md:gap-8">

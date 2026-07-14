@@ -45,7 +45,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
 ]
 
 export const TEAM_QUOTE = {
-  text: 'No vendemos propiedades. Ayudamos a personas a tomar la mejor decisión posible sobre un bien que importa de verdad.',
+  text: 'Sabemos la importancia de acertar cuando se trata de su vivienda. Por eso escuchamos primero, le informamos con claridad y no damos un paso que usted no entienda.',
   attribution: 'Julio Puig',
   role: 'Director',
 } as const
