@@ -2,23 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { getAdminTokenFromRequest, verifyAdminSessionToken } from '@/lib/admin-session'
 import {
-  assertFeaturedHomeLimit,
-  bodyToInsert,
-  createPropertyRow,
-  isSupabaseConfigured,
-  rowToProperty,
-} from '@/lib/property-db'
+  wouldExceedFeaturedHomeLimit,
+} from '@/lib/property-constants'
+import {
+  inputToProperty,
+  readLocalProperties,
+  slugifyPropertyId,
+  writeLocalProperties,
+} from '@/lib/local-store.server'
 import { getAllProperties } from '@/lib/properties-store'
 
 function unauthorized() {
   return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
-}
-
-function notConfigured() {
-  return NextResponse.json(
-    { error: 'Supabase no configurado. Añade las variables de entorno del proyecto.' },
-    { status: 503 }
-  )
 }
 
 export async function GET() {
@@ -30,27 +25,28 @@ export async function POST(request: NextRequest) {
   if (!verifyAdminSessionToken(getAdminTokenFromRequest(request))) {
     return unauthorized()
   }
-  if (!isSupabaseConfigured()) return notConfigured()
 
-  let body: Parameters<typeof bodyToInsert>[0]
+  let body: Parameters<typeof inputToProperty>[0]
   try {
     body = await request.json()
   } catch {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
-  const insert = bodyToInsert(body)
-  const capError = await assertFeaturedHomeLimit(insert.featured, null)
-  if (capError) return NextResponse.json({ error: capError }, { status: 400 })
+  const current = readLocalProperties()
+  const property = inputToProperty(body)
+  property.id = slugifyPropertyId(body.title)
 
-  try {
-    const row = await createPropertyRow(insert, body.title)
-    revalidatePath('/')
-    revalidatePath('/propiedades')
-    revalidatePath(`/propiedades/${row.id}`)
-    return NextResponse.json(rowToProperty(row), { status: 201 })
-  } catch (e) {
-    const message = e instanceof Error ? e.message : 'Error al crear'
-    return NextResponse.json({ error: message }, { status: 500 })
+  if (current.some((item) => item.id === property.id)) {
+    return NextResponse.json({ error: 'Ya existe una propiedad con un título similar' }, { status: 400 })
   }
+
+  if (wouldExceedFeaturedHomeLimit(current, { wantFeatured: property.featured, editingPropertyId: null })) {
+    return NextResponse.json({ error: `Máximo ${3} propiedades destacadas en la home` }, { status: 400 })
+  }
+
+  writeLocalProperties([...current, property])
+  revalidatePath('/')
+  revalidatePath('/propiedades')
+  return NextResponse.json(property, { status: 201 })
 }

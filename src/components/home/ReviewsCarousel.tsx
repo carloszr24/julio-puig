@@ -149,8 +149,8 @@ export function ReviewsCarousel() {
                   idx !== 2 ? 'sm:border-r sm:border-stone-200' : ''
                 }`}
               >
-                <p className="font-display text-3xl font-bold tracking-tight text-stone-900 md:text-4xl">{stat.value}</p>
-                <p className="mt-1.5 text-[11px] uppercase tracking-[0.14em] text-stone-500">{stat.label}</p>
+                <p className="font-display text-3xl font-light tracking-tight text-stone-900 md:text-4xl">{stat.value}</p>
+                <p className="mt-1.5 text-[10px] uppercase tracking-[0.16em] text-stone-500 font-light">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -161,11 +161,11 @@ export function ReviewsCarousel() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <p className="text-gold text-xs tracking-[0.3em] uppercase mb-3">Opiniones</p>
+          <p className="text-brand-burgundy text-[10px] tracking-[0.22em] uppercase mb-3 font-light">Opiniones</p>
           <h2 className="section-title mb-5">Nuestra prioridad: el cliente</h2>
           <div className="flex flex-col items-center gap-2 text-stone-700">
             <StarRow />
-            <p className="text-base md:text-lg font-medium">Líderes en ofrecer un servicio adaptado a las necesidades del cliente</p>
+            <p className="text-base md:text-lg font-light">Un servicio adaptado a las necesidades de cada cliente</p>
           </div>
         </div>
 
@@ -187,8 +187,8 @@ export function ReviewsCarousel() {
                 <div key={`${review.id}-${idx}`} className="shrink-0 w-[86vw] sm:w-[68vw] md:w-[44vw] lg:w-[31vw]">
                   <article className="card-hover h-full min-h-56 bg-white border border-stone-200 p-6 md:p-7 rounded-lg shadow-sm hover:shadow-lg">
                     <StarRow />
-                    <p className="text-stone-600 text-sm md:text-base leading-relaxed mt-4">"{review.text}"</p>
-                    <p className="mt-6 text-stone-900 font-semibold">{review.name}</p>
+                    <p className="text-stone-600 text-sm md:text-base leading-relaxed mt-4 font-light">"{review.text}"</p>
+                    <p className="mt-6 text-stone-900 font-light">{review.name}</p>
                   </article>
                 </div>
               ))}

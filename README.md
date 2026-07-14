@@ -1,52 +1,14 @@
-# YMAR Inmobiliaria — Web
+# Julio Puig Real Estate — Web
 
-Next.js + TypeScript + Tailwind + **Supabase** (Postgres + cliente oficial)
+Next.js + TypeScript + Tailwind. **Datos locales** en `data/properties.json` y `data/leads.json` (sin base de datos externa).
 
 ---
 
 ## Setup en local
 
-### 1. Instalar dependencias
-
 ```bash
 npm install
-```
-
-### 2. Supabase: tabla y RLS
-
-1. Crea un proyecto en [Supabase](https://supabase.com).
-2. **SQL Editor** → pega y ejecuta el contenido de:
-   - [`supabase/migrations/20260407120000_properties.sql`](supabase/migrations/20260407120000_properties.sql)
-   - [`supabase/migrations/20260423170000_leads.sql`](supabase/migrations/20260423170000_leads.sql)
-3. **Storage** → crea un bucket llamado **`property-images`** y márcalo como **Public** (para fotos de propiedades).
-
-### 3. Variables de entorno
-
-```bash
 cp .env.example .env
-```
-
-Rellena con **Project Settings → API**:
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` (anon / public)
-- `SUPABASE_SERVICE_ROLE_KEY` (service_role; solo servidor)
-- `ADMIN_PASSWORD` (acceso a `/admin`)
-- `RESEND_API_KEY` (opcional, alertas por email de nuevos leads)
-- `RESEND_FROM_EMAIL` (opcional)
-- `LEADS_NOTIFICATION_EMAIL` (opcional)
-
-### 4. Datos de ejemplo (opcional)
-
-```bash
-npm run db:seed
-```
-
-(Requiere Node 20+ por `node --env-file=.env`, o exporta las variables a mano.)
-
-### 5. Desarrollo
-
-```bash
 npm run dev
 ```
 
@@ -56,18 +18,22 @@ npm run dev
 
 ---
 
-## Despliegue en Vercel
+## Propiedades
 
-1. Conecta el repo en [Vercel](https://vercel.com).
-2. **Environment Variables** (Production y Preview si aplica): las mismas que en `.env`.
-3. Deploy: `next build` (por defecto).
+El catálogo vive en [`data/properties.json`](data/properties.json). Las fotos van en `public/images/properties/<id>/`.
 
-No hace falta `DATABASE_URL` ni Prisma: la app usa el cliente Supabase.
+Para añadir una propiedad:
+
+1. Copia las imágenes a `public/images/properties/<id>/`
+2. Añade la ficha en `data/properties.json`
+3. Reinicia el servidor de desarrollo si hace falta
+
+También puede gestionarse desde `/admin` en local (escribe en los mismos archivos).
 
 ---
 
 ## Stack
 
 - Next.js 14 (App Router)
-- Supabase JS (`@supabase/supabase-js`)
 - Tailwind CSS
+- Almacenamiento local (JSON + carpeta `public/`)

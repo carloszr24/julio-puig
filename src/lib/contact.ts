@@ -1,34 +1,40 @@
-export const CONTACT_EMAIL = 'ymarinmobiliaria@gmail.com'
+export const CONTACT_EMAIL = ''
 
 export const AGENT = {
-  name: 'YMAR Inmobiliaria',
+  name: 'Julio Puig Real Estate',
   title: 'Agencia inmobiliaria',
   tagline:
-    'Más de 30 años de experiencia en compra, venta y alquiler en todo el territorio nacional.',
+    'Experiencia y dedicación en compra, venta y alquiler con un trato personalizado y profesional.',
 } as const
 
 export const LEGAL = {
-  ownerName: 'Ángel García del Valle',
+  ownerName: 'Julio Puig',
   legalForm: 'autónomo',
-  taxId: '50066862W',
-  address: 'Av. de la Constitución, 62, 28931 Móstoles, Madrid',
+  taxId: '',
+  address: 'C. Cervantes, 70, 41100 Coria del Río, Sevilla',
 } as const
 
 export const OFFICES = {
   primary: {
-    label: 'Oficina principal',
-    line1: 'Av. de la Constitución, 62',
-    line2: '28931 Móstoles, Madrid',
-    full: 'Av. de la Constitución, 62, 28931 Móstoles, Madrid',
-    mapsQuery: 'Av.+de+la+Constitucion,+62,+28931+Mostoles,+Madrid',
+    label: 'Oficina',
+    line1: 'C. Cervantes, 70',
+    line2: '41100 Coria del Río, Sevilla',
+    full: 'C. Cervantes, 70, 41100 Coria del Río, Sevilla',
+    mapsQuery: 'Calle+Cervantes+70,+41100+Coria+del+Rio,+Sevilla',
   },
-  secondary: {
-    label: 'Segunda oficina',
-    line1: 'C/ Veracruz, 10',
-    line2: '28936 Móstoles, Madrid',
-    full: 'C/ Veracruz, 10, 28936 Móstoles, Madrid',
-    mapsQuery: 'Calle+Veracruz+10,+28936+Mostoles,+Madrid',
-  },
+} as const
+
+export const BUSINESS_HOURS = {
+  label: 'Horario de atención',
+  schedule: [
+    { day: 'Lunes', hours: '9:00 – 20:30' },
+    { day: 'Martes', hours: '9:00 – 20:00' },
+    { day: 'Miércoles', hours: '9:00 – 20:00' },
+    { day: 'Jueves', hours: '9:00 – 20:00' },
+    { day: 'Viernes', hours: '9:00 – 20:00' },
+    { day: 'Sábado', hours: 'Cerrado' },
+    { day: 'Domingo', hours: 'Cerrado' },
+  ],
 } as const
 
 const contactEmail = (process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? CONTACT_EMAIL).trim()
@@ -37,23 +43,16 @@ export const CONTACT = {
   address: OFFICES.primary,
   offices: OFFICES,
   phone: {
-    display: '606 620 776',
-    e164: '+34606620776',
-    wa: '34606620776',
-    label: 'Móvil',
-  },
-  landline: {
-    display: '91 613 60 36',
-    e164: '+34916136036',
-    label: 'Fijo',
+    display: '633 71 77 14',
+    e164: '+34633717714',
+    wa: '34633717714',
+    label: 'Teléfono',
   },
   email: contactEmail,
 } as const
 
 export const mapsHref = `https://maps.google.com/?q=${CONTACT.address.mapsQuery}`
-export const secondaryMapsHref = `https://maps.google.com/?q=${OFFICES.secondary.mapsQuery}`
 export const phoneHref = `tel:${CONTACT.phone.e164}`
-export const landlineHref = `tel:${CONTACT.landline.e164}`
 export const hasEmail = CONTACT.email.length > 0
 export const emailHref = hasEmail ? `mailto:${CONTACT.email}` : ''
 export const whatsappHref = `https://wa.me/${CONTACT.phone.wa}`

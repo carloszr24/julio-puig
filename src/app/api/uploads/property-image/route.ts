@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminSupabase } from '@/lib/supabase/admin'
+import { mkdirSync, existsSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { getAdminTokenFromRequest, verifyAdminSessionToken } from '@/lib/admin-session'
 import { optimizePropertyImage } from '@/lib/optimize-image'
 
-const BUCKET = 'property-images'
 const MAX_BYTES = 5 * 1024 * 1024
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
 
@@ -31,19 +31,15 @@ export async function POST(request: NextRequest) {
 
   const originalBuffer = Buffer.from(await file.arrayBuffer())
   const optimized = await optimizePropertyImage(originalBuffer)
-  const objectPath = `properties/${propertyId}/${crypto.randomUUID()}.${optimized.ext}`
+  const dir = join(process.cwd(), 'public', 'images', 'properties', propertyId)
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
 
-  const supabase = createAdminSupabase()
-  const { error: upErr } = await supabase.storage
-    .from(BUCKET)
-    .upload(objectPath, optimized.data, { contentType: optimized.contentType, upsert: false })
+  const filename = `${Date.now()}.${optimized.ext}`
+  const diskPath = join(dir, filename)
+  writeFileSync(diskPath, optimized.data)
 
-  if (upErr) {
-    return NextResponse.json({ error: upErr.message }, { status: 500 })
-  }
-
-  const { data } = supabase.storage.from(BUCKET).getPublicUrl(objectPath)
-  return NextResponse.json({ url: data.publicUrl, path: objectPath })
+  const publicUrl = `/images/properties/${propertyId}/${filename}`
+  return NextResponse.json({ url: publicUrl, path: publicUrl })
 }
 
 export async function DELETE(request: NextRequest) {
@@ -51,22 +47,8 @@ export async function DELETE(request: NextRequest) {
     return unauthorized()
   }
 
-  let body: unknown
-  try {
-    body = await request.json()
-  } catch {
-    body = null
-  }
-
-  const path = (body as { path?: string } | null)?.path?.trim()
-  if (!path) return badRequest('Falta path')
-
-  const supabase = createAdminSupabase()
-  const { error } = await supabase.storage.from(BUCKET).remove([path])
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-
-  return NextResponse.json({ ok: true })
+  return NextResponse.json(
+    { error: 'Elimine la imagen del JSON de la propiedad en data/properties.json' },
+    { status: 501 }
+  )
 }
-

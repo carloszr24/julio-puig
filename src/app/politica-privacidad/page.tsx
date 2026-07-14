@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { LegalPageShell } from '@/components/legal/LegalPageShell'
 import { AGENT, CONTACT, LEGAL, hasEmail } from '@/lib/contact'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ymar-inmobiliaria.vercel.app'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export const metadata = {
   title: `Política de privacidad | ${AGENT.name}`,
@@ -158,9 +158,8 @@ export default function PoliticaPrivacidadPage() {
         </p>
         <p>
           Para el funcionamiento de la web y la gestión de consultas, {AGENT.name} puede apoyarse en
-          proveedores que actúan como encargados del tratamiento, como plataformas de alojamiento y base de
-          datos (por ejemplo, Supabase) y, en su caso, servicios de envío de correo electrónico para la
-          notificación de solicitudes recibidas.
+          proveedores que actúan como encargados del tratamiento, como plataformas de alojamiento web y
+          servicios de envío de correo electrónico para la notificación de solicitudes recibidas.
         </p>
         <p>
           Estos proveedores únicamente tratarán los datos siguiendo nuestras instrucciones y con las garantías

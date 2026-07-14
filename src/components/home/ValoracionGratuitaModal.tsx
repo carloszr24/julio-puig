@@ -48,7 +48,7 @@ const saleTimelineOptions = [
   'En 1-3 meses',
   'En 3-6 meses',
   'En 6-12 meses',
-  'Solo quiero una orientación por ahora',
+  'Deseo una orientación por ahora',
 ]
 
 const conditionOptions = [
@@ -64,7 +64,7 @@ type Props = {
   triggerLabel?: string
 }
 
-export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 'Quiero vender' }: Props) {
+export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 'Deseo vender' }: Props) {
   const [mounted, setMounted] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -129,13 +129,13 @@ export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 
     setError('')
     const required = [form.name, form.phone, form.email]
     if (required.some((value) => !value.trim())) {
-      setError('Completa tus datos de contacto para enviar la solicitud.')
+      setError('Complete sus datos de contacto para enviar la solicitud.')
       return
     }
 
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
     if (!emailOk) {
-      setError('Introduce un email válido.')
+      setError('Introduzca un email válido.')
       return
     }
 
@@ -174,7 +174,7 @@ export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 
       if (!res.ok) throw new Error('No se pudo enviar la solicitud')
       setSubmitted(true)
     } catch {
-      setError('No se pudo enviar la solicitud. Intentalo de nuevo.')
+      setError('No se pudo enviar la solicitud. Inténtelo de nuevo.')
     } finally {
       setSubmitting(false)
     }
@@ -201,7 +201,7 @@ export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 
               <div className="lead-modal-thanks">
                 <span className="lead-modal-thanks-icon" aria-hidden="true">✓</span>
                 <h3>Gracias por confiar en nosotros</h3>
-                <p>Te contactaremos para pasarte la valoración gratuita de tu propiedad.</p>
+                <p>Nos pondremos en contacto con usted para facilitarle la valoración gratuita de su propiedad.</p>
                 <button type="button" className="btn-primary lead-modal-submit" onClick={closeModal}>
                   Cerrar
                 </button>
@@ -209,10 +209,10 @@ export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 
             ) : (
               <>
                 <div className="lead-modal-hero">
-                  <h3 className="lead-modal-title">¿Quieres saber cuánto vale tu casa?</h3>
+                  <h3 className="lead-modal-title">¿Desea conocer el valor de su vivienda?</h3>
                   <p className="lead-modal-subtitle">
-                    Completa los datos y te haremos una valoración completa de tu inmueble sin compromiso.
-                    Además, si vendes con nosotros te regalamos el certificado energético obligatorio.
+                    Complete los datos y le realizaremos una valoración completa de su inmueble sin compromiso.
+                    Además, si vende con nosotros, le obsequiamos el certificado energético obligatorio.
                   </p>
                 </div>
 
@@ -229,7 +229,7 @@ export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 
 
                   {step === 1 && (
                     <div className="lead-modal-section">
-                      <h4>Tu inmueble</h4>
+                      <h4>Su inmueble</h4>
                       <div className="lead-modal-grid">
                         <label>
                           Tipo de inmueble *
@@ -305,7 +305,7 @@ export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 
                         </label>
 
                         <label className="lead-modal-full">
-                          ¿Cuándo planeas venderlo? *
+                          ¿Cuándo planea venderlo? *
                           <select
                             value={form.saleTimeline}
                             onChange={(e) => setForm((prev) => ({ ...prev, saleTimeline: e.target.value }))}

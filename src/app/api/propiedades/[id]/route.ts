@@ -1,26 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { getAdminTokenFromRequest, verifyAdminSessionToken } from '@/lib/admin-session'
+import { wouldExceedFeaturedHomeLimit } from '@/lib/property-constants'
 import {
-  assertFeaturedHomeLimit,
-  bodyToInsert,
-  deletePropertyRow,
-  getPropertyRowById,
-  isSupabaseConfigured,
-  rowToProperty,
-  updatePropertyRow,
-} from '@/lib/property-db'
+  inputToProperty,
+  readLocalProperties,
+  writeLocalProperties,
+} from '@/lib/local-store.server'
 import { getPropertyById } from '@/lib/properties-store'
 
 function unauthorized() {
   return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
-}
-
-function notConfigured() {
-  return NextResponse.json(
-    { error: 'Supabase no configurado. Añade las variables de entorno del proyecto.' },
-    { status: 503 }
-  )
 }
 
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
@@ -33,51 +23,45 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   if (!verifyAdminSessionToken(getAdminTokenFromRequest(request))) {
     return unauthorized()
   }
-  if (!isSupabaseConfigured()) return notConfigured()
 
-  let body: Parameters<typeof bodyToInsert>[0]
+  let body: Parameters<typeof inputToProperty>[0]
   try {
     body = await request.json()
   } catch {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
-  const existing = await getPropertyRowById(params.id)
+  const current = readLocalProperties()
+  const existing = current.find((item) => item.id === params.id)
   if (!existing) return NextResponse.json({ error: 'No encontrada' }, { status: 404 })
 
-  const insert = bodyToInsert(body)
-  const capError = await assertFeaturedHomeLimit(insert.featured, params.id)
-  if (capError) return NextResponse.json({ error: capError }, { status: 400 })
+  const property = inputToProperty(body, existing)
+  property.id = params.id
 
-  try {
-    const row = await updatePropertyRow(params.id, insert)
-    revalidatePath('/')
-    revalidatePath('/propiedades')
-    revalidatePath(`/propiedades/${params.id}`)
-    return NextResponse.json(rowToProperty(row))
-  } catch (e) {
-    const message = e instanceof Error ? e.message : 'Error al actualizar'
-    return NextResponse.json({ error: message }, { status: 500 })
+  if (wouldExceedFeaturedHomeLimit(current, { wantFeatured: property.featured, editingPropertyId: params.id })) {
+    return NextResponse.json({ error: 'Máximo 3 propiedades destacadas en la home' }, { status: 400 })
   }
+
+  writeLocalProperties(current.map((item) => (item.id === params.id ? property : item)))
+  revalidatePath('/')
+  revalidatePath('/propiedades')
+  revalidatePath(`/propiedades/${params.id}`)
+  return NextResponse.json(property)
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   if (!verifyAdminSessionToken(getAdminTokenFromRequest(request))) {
     return unauthorized()
   }
-  if (!isSupabaseConfigured()) return notConfigured()
 
-  const existing = await getPropertyRowById(params.id)
-  if (!existing) return NextResponse.json({ error: 'No encontrada' }, { status: 404 })
-
-  try {
-    await deletePropertyRow(params.id)
-    revalidatePath('/')
-    revalidatePath('/propiedades')
-    revalidatePath(`/propiedades/${params.id}`)
-    return NextResponse.json({ ok: true })
-  } catch (e) {
-    const message = e instanceof Error ? e.message : 'Error al eliminar'
-    return NextResponse.json({ error: message }, { status: 500 })
+  const current = readLocalProperties()
+  if (!current.some((item) => item.id === params.id)) {
+    return NextResponse.json({ error: 'No encontrada' }, { status: 404 })
   }
+
+  writeLocalProperties(current.filter((item) => item.id !== params.id))
+  revalidatePath('/')
+  revalidatePath('/propiedades')
+  revalidatePath(`/propiedades/${params.id}`)
+  return NextResponse.json({ ok: true })
 }

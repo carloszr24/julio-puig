@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { getAdminTokenFromRequest, verifyAdminSessionToken } from '@/lib/admin-session'
-import { isSupabaseConfigured, updatePropertySortOrders } from '@/lib/property-db'
+import { readLocalProperties, writeLocalProperties } from '@/lib/local-store.server'
 
 function unauthorized() {
   return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
@@ -10,9 +10,6 @@ function unauthorized() {
 export async function PUT(request: NextRequest) {
   if (!verifyAdminSessionToken(getAdminTokenFromRequest(request))) {
     return unauthorized()
-  }
-  if (!isSupabaseConfigured()) {
-    return NextResponse.json({ error: 'Supabase no configurado' }, { status: 503 })
   }
 
   let body: { ids?: unknown }
@@ -27,13 +24,19 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Falta la lista de ids' }, { status: 400 })
   }
 
-  try {
-    await updatePropertySortOrders(ids)
-    revalidatePath('/propiedades')
-    revalidatePath('/')
-    return NextResponse.json({ ok: true })
-  } catch (e) {
-    const message = e instanceof Error ? e.message : 'Error al reordenar'
-    return NextResponse.json({ error: message }, { status: 500 })
-  }
+  const current = readLocalProperties()
+  const byId = new Map(current.map((item) => [item.id, item]))
+  const reordered = ids
+    .map((id, index) => {
+      const item = byId.get(id)
+      if (!item) return null
+      return { ...item, sortOrder: index, updatedAt: new Date() }
+    })
+    .filter(Boolean)
+
+  const missing = current.filter((item) => !ids.includes(item.id))
+  writeLocalProperties([...(reordered as typeof current), ...missing])
+  revalidatePath('/propiedades')
+  revalidatePath('/')
+  return NextResponse.json({ ok: true })
 }

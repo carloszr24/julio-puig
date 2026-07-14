@@ -19,9 +19,8 @@ export type LeadNotificationPayload = {
   observations?: string | null
 }
 
-const BRAND_RED = '#C8102E'
-const BRAND_BLUE = '#0057FF'
-const SITE_URL = 'https://www.ymarinmobiliaria.es'
+const BRAND_BURGUNDY = '#601B2E'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'https://julio-puig.vercel.app'
 
 function escapeHtml(value: string): string {
   return value
@@ -62,9 +61,9 @@ function buildHeadline(record: LeadNotificationPayload): string {
 function buildBadge(record: LeadNotificationPayload): { label: string; color: string } {
   switch (record.source) {
     case 'web_contacto':
-      return { label: 'Contacto', color: BRAND_BLUE }
+      return { label: 'Contacto', color: BRAND_BURGUNDY }
     case 'web_valoracion':
-      return { label: 'Valoración gratuita', color: BRAND_RED }
+      return { label: 'Valoración gratuita', color: BRAND_BURGUNDY }
     default:
       return { label: sourceLabel(record.source), color: '#57534e' }
   }
@@ -148,7 +147,7 @@ function buildFields(record: LeadNotificationPayload): FieldRow[] {
 function renderFieldValue(field: FieldRow): string {
   const safeValue = escapeHtml(field.value)
   if (field.href) {
-    return `<a href="${escapeHtml(field.href)}" style="color:${BRAND_BLUE};text-decoration:none;font-weight:600">${safeValue}</a>`
+    return `<a href="${escapeHtml(field.href)}" style="color:${BRAND_BURGUNDY};text-decoration:none;font-weight:600">${safeValue}</a>`
   }
   return `<span style="color:#1c1917">${safeValue}</span>`
 }
@@ -194,14 +193,14 @@ function buildEmailContent(record: LeadNotificationPayload) {
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0 0">
       <tr>
         <td align="left" style="padding:0 0 10px;width:100%">
-          <a href="tel:${escapeHtml(record.phone.replace(/\s/g, ''))}" style="display:block;max-width:320px;background:${BRAND_RED};color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;padding:12px 20px;border-radius:8px;text-align:center">Llamar ahora</a>
+          <a href="tel:${escapeHtml(record.phone.replace(/\s/g, ''))}" style="display:block;max-width:320px;background:${BRAND_BURGUNDY};color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;padding:12px 20px;border-radius:8px;text-align:center">Llamar ahora</a>
         </td>
       </tr>
       ${
         record.email
           ? `<tr>
         <td align="left" style="width:100%">
-          <a href="mailto:${escapeHtml(record.email)}" style="display:block;max-width:320px;background:#ffffff;color:${BRAND_RED};font-size:14px;font-weight:700;text-decoration:none;padding:11px 20px;border-radius:8px;border:2px solid ${BRAND_RED};text-align:center">Responder por email</a>
+          <a href="mailto:${escapeHtml(record.email)}" style="display:block;max-width:320px;background:#ffffff;color:${BRAND_BURGUNDY};font-size:14px;font-weight:700;text-decoration:none;padding:11px 20px;border-radius:8px;border:2px solid ${BRAND_BURGUNDY};text-align:center">Responder por email</a>
         </td>
       </tr>`
           : ''
@@ -219,8 +218,8 @@ function buildEmailContent(record: LeadNotificationPayload) {
   <body style="margin:0;padding:24px 12px;background:#f5f5f4;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%">
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:560px;margin:0 auto">
       <tr>
-        <td style="background:${BRAND_RED};border-radius:12px 12px 0 0;padding:20px 24px">
-          <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.82)">YMAR Inmobiliaria</div>
+        <td style="background:${BRAND_BURGUNDY};border-radius:12px 12px 0 0;padding:20px 24px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.82)">Julio Puig Real Estate</div>
           <div style="margin-top:8px;font-size:22px;font-weight:700;line-height:1.25;color:#ffffff">${escapeHtml(headline)}</div>
         </td>
       </tr>
@@ -240,7 +239,7 @@ function buildEmailContent(record: LeadNotificationPayload) {
       </tr>
       <tr>
         <td style="background:#fafaf9;border:1px solid #e7e5e4;border-top:none;border-radius:0 0 12px 12px;padding:16px 24px;text-align:center">
-          <a href="${SITE_URL}" style="font-size:13px;color:#78716c;text-decoration:none">ymarinmobiliaria.es</a>
+          <a href="${SITE_URL}" style="font-size:13px;color:#78716c;text-decoration:none">julio-puig.vercel.app</a>
         </td>
       </tr>
     </table>
@@ -251,7 +250,7 @@ function buildEmailContent(record: LeadNotificationPayload) {
 }
 
 function notificationRecipients(): string[] {
-  const raw = process.env.LEADS_NOTIFICATION_EMAIL?.trim() || 'ymarinmobiliaria@gmail.com'
+  const raw = process.env.LEADS_NOTIFICATION_EMAIL?.trim() || ''
   return raw
     .split(',')
     .map((email) => email.trim())
@@ -276,7 +275,7 @@ export async function sendLeadNotificationEmail(
   }
 
   const from =
-    process.env.RESEND_FROM_EMAIL?.trim() || 'YMAR Inmobiliaria <onboarding@resend.dev>'
+    process.env.RESEND_FROM_EMAIL?.trim() || 'Julio Puig Real Estate <onboarding@resend.dev>'
 
   const { text, html, subject } = buildEmailContent(record)
   const body: Record<string, unknown> = {

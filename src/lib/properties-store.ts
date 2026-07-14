@@ -1,19 +1,12 @@
-import { DEMO_PROPERTIES } from '@/data/properties'
-import {
-  getPropertyRowById,
-  isArchivedFlag,
-  isFeaturedFlag,
-  isSupabaseConfigured,
-  listFeaturedPropertyRows,
-  listPropertyRows,
-  MAX_FEATURED_ON_HOME,
-  rowsToProperties,
-  rowToProperty,
-} from '@/lib/property-db'
 import type { Property } from '@/types'
 import { getPropertyProvince } from '@/lib/property-location'
 import type { PropertyFilters } from '@/types'
 import { propertyHasExtra } from '@/lib/property-extras'
+import {
+  isFeaturedFlag,
+  MAX_FEATURED_ON_HOME,
+} from '@/lib/property-constants'
+import { readLocalProperties } from '@/lib/local-store.server'
 
 function matchesBedrooms(property: Property, minBedrooms: string): boolean {
   if (property.bedrooms == null) return false
@@ -52,29 +45,21 @@ function sortByDisplayOrder(properties: Property[]): Property[] {
   })
 }
 
-function demoCatalog(): Property[] {
-  return sortByDisplayOrder(DEMO_PROPERTIES)
+function localCatalog(): Property[] {
+  return sortByDisplayOrder(readLocalProperties())
 }
 
 export async function getAllProperties(): Promise<Property[]> {
-  if (!isSupabaseConfigured()) return demoCatalog()
-  const rows = await listPropertyRows()
-  return rowsToProperties(rows)
+  return localCatalog()
 }
 
 export async function getPublicProperties(): Promise<Property[]> {
-  const properties = await getAllProperties()
-  return properties.filter((property) => !property.archived)
+  return localCatalog().filter((property) => !property.archived)
 }
 
 export async function getPropertyById(id: string): Promise<Property | undefined> {
-  if (!isSupabaseConfigured()) {
-    const property = DEMO_PROPERTIES.find((p) => p.id === id)
-    return property && !property.archived ? property : undefined
-  }
-  const row = await getPropertyRowById(id)
-  if (!row || isArchivedFlag(row.archived)) return undefined
-  return rowToProperty(row)
+  const property = readLocalProperties().find((p) => p.id === id)
+  return property && !property.archived ? property : undefined
 }
 
 export function filterProperties(
@@ -125,14 +110,10 @@ export function filterProperties(
 }
 
 export async function getFeaturedPropertiesForHome(): Promise<Property[]> {
-  if (!isSupabaseConfigured()) {
-    return demoCatalog()
-      .filter((p) => isFeaturedFlag(p.featured) && !p.archived)
-      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-      .slice(0, MAX_FEATURED_ON_HOME)
-  }
-  const rows = await listFeaturedPropertyRows()
-  return rowsToProperties(rows)
+  return localCatalog()
+    .filter((p) => isFeaturedFlag(p.featured) && !p.archived)
+    .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+    .slice(0, MAX_FEATURED_ON_HOME)
 }
 
 export function applyPropertyFilters(properties: Property[], filters: PropertyFilters): Property[] {

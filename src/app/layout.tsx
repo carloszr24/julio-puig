@@ -1,27 +1,27 @@
 import type { Metadata } from 'next'
-import { DM_Sans } from 'next/font/google'
+import { Cormorant_Garamond, Source_Sans_3 } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 
-const sans = DM_Sans({
+const sans = Source_Sans_3({
   subsets: ['latin'],
   variable: '--font-body',
-  weight: ['400', '500', '700'],
+  weight: ['300', '400', '500'],
 })
 
-const display = DM_Sans({
+const display = Cormorant_Garamond({
   subsets: ['latin'],
   variable: '--font-display',
-  weight: ['500', '600', '700'],
+  weight: ['300', '400', '500'],
 })
 
 export const metadata: Metadata = {
-  title: 'YMAR Inmobiliaria | Agencia inmobiliaria',
+  title: 'Julio Puig Real Estate | Agencia inmobiliaria',
   description:
-    'Compra, venta y alquiler en todo el territorio nacional. Oficina principal en Móstoles.',
+    'Compra, venta y alquiler en Coria del Río y provincia de Sevilla. Servicio personalizado y asesoramiento integral.',
   keywords:
-    'ymar inmobiliaria, inmobiliaria mostoles, agencia inmobiliaria madrid, compra vivienda, venta vivienda, alquiler, terrenos, locales',
+    'julio puig, inmobiliaria coria del rio, inmobiliaria sevilla, agencia inmobiliaria, compra vivienda, venta vivienda, alquiler',
 }
 
 export default function RootLayout({

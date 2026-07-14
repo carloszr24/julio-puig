@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { getAdminTokenFromRequest, verifyAdminSessionToken } from '@/lib/admin-session'
-import {
-  getPropertyRowById,
-  isSupabaseConfigured,
-  rowToProperty,
-  setPropertyArchived,
-} from '@/lib/property-db'
+import { readLocalProperties, writeLocalProperties } from '@/lib/local-store.server'
 
 function unauthorized() {
   return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
@@ -15,9 +10,6 @@ function unauthorized() {
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   if (!verifyAdminSessionToken(getAdminTokenFromRequest(request))) {
     return unauthorized()
-  }
-  if (!isSupabaseConfigured()) {
-    return NextResponse.json({ error: 'Supabase no configurado' }, { status: 503 })
   }
 
   let body: { archived?: unknown }
@@ -31,17 +23,20 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     return NextResponse.json({ error: 'Falta archived (true/false)' }, { status: 400 })
   }
 
-  const existing = await getPropertyRowById(params.id)
+  const current = readLocalProperties()
+  const existing = current.find((item) => item.id === params.id)
   if (!existing) return NextResponse.json({ error: 'No encontrada' }, { status: 404 })
 
-  try {
-    const row = await setPropertyArchived(params.id, body.archived)
-    revalidatePath('/')
-    revalidatePath('/propiedades')
-    revalidatePath(`/propiedades/${params.id}`)
-    return NextResponse.json(rowToProperty(row))
-  } catch (e) {
-    const message = e instanceof Error ? e.message : 'Error al archivar'
-    return NextResponse.json({ error: message }, { status: 500 })
+  const updated = {
+    ...existing,
+    archived: body.archived,
+    featured: body.archived ? false : existing.featured,
+    updatedAt: new Date(),
   }
+
+  writeLocalProperties(current.map((item) => (item.id === params.id ? updated : item)))
+  revalidatePath('/')
+  revalidatePath('/propiedades')
+  revalidatePath(`/propiedades/${params.id}`)
+  return NextResponse.json(updated)
 }

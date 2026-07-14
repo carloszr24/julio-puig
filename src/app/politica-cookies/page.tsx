@@ -3,7 +3,7 @@ import { LegalPageShell } from '@/components/legal/LegalPageShell'
 import { AGENT, CONTACT, LEGAL, hasEmail } from '@/lib/contact'
 import { ADMIN_COOKIE_NAME } from '@/lib/admin-session'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ymar-inmobiliaria.vercel.app'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export const metadata = {
   title: `Política de cookies | ${AGENT.name}`,
@@ -135,7 +135,7 @@ export default function PoliticaCookiesPage() {
           </table>
         </div>
         <p>
-          El proveedor de alojamiento (Vercel) puede tratar datos técnicos de conexión necesarios para servir la
+          El proveedor de alojamiento puede tratar datos técnicos de conexión necesarios para servir la
           web de forma segura. No obstante, en la navegación habitual del usuario no desplegamos herramientas
           adicionales de medición o publicidad.
         </p>

@@ -1,11 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminSupabase } from '@/lib/supabase/admin'
 import { getAdminTokenFromRequest, verifyAdminSessionToken } from '@/lib/admin-session'
 import { LEAD_INTENTS, LEAD_PRIORITIES, LEAD_SOURCES, LEAD_STATUSES, rowsToLeads, type LeadRow } from '@/lib/leads'
 import { sendLeadNotificationEmail } from '@/lib/lead-notification'
+import { appendLocalLead, readLocalLeads, writeLocalLeads } from '@/lib/local-store.server'
 
 function unauthorized() {
   return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+}
+
+function toLeadRow(stored: ReturnType<typeof readLocalLeads>[number]): LeadRow {
+  return {
+    id: stored.id,
+    full_name: stored.fullName,
+    email: stored.email ?? null,
+    phone: stored.phone,
+    source: stored.source as LeadRow['source'],
+    intent: stored.intent as LeadRow['intent'],
+    status: stored.status as LeadRow['status'],
+    priority: stored.priority as LeadRow['priority'],
+    property_ref: stored.propertyRef ?? null,
+    notes: stored.notes ?? null,
+    sale_timeline: stored.saleTimeline ?? null,
+    assigned_to: stored.assignedTo ?? null,
+    first_response_at: stored.firstResponseAt ?? null,
+    last_contact_at: stored.lastContactAt ?? null,
+    created_at: stored.createdAt,
+    updated_at: stored.updatedAt,
+  }
 }
 
 export async function GET(request: NextRequest) {
@@ -13,19 +34,8 @@ export async function GET(request: NextRequest) {
     return unauthorized()
   }
 
-  try {
-    const supabase = createAdminSupabase()
-    const { data, error } = await supabase
-      .from('leads')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(500)
-
-    if (error) throw error
-    return NextResponse.json(rowsToLeads(data as LeadRow[] | null))
-  } catch {
-    return NextResponse.json({ error: 'Error al obtener leads' }, { status: 500 })
-  }
+  const leads = readLocalLeads().map(toLeadRow)
+  return NextResponse.json(rowsToLeads(leads))
 }
 
 export async function POST(request: NextRequest) {
@@ -49,39 +59,33 @@ export async function POST(request: NextRequest) {
     const observations = String(body.observations || '').trim() || null
 
     if (!fullName || !phone) {
-      return NextResponse.json({ error: 'Nombre y telefono son obligatorios' }, { status: 400 })
+      return NextResponse.json({ error: 'Nombre y teléfono son obligatorios' }, { status: 400 })
     }
     if (!LEAD_SOURCES.includes(source as (typeof LEAD_SOURCES)[number])) {
-      return NextResponse.json({ error: 'Origen de lead no valido' }, { status: 400 })
+      return NextResponse.json({ error: 'Origen de lead no válido' }, { status: 400 })
     }
     if (!LEAD_INTENTS.includes(intent as (typeof LEAD_INTENTS)[number])) {
-      return NextResponse.json({ error: 'Tipo de interes no valido' }, { status: 400 })
+      return NextResponse.json({ error: 'Tipo de interés no válido' }, { status: 400 })
     }
     if (!LEAD_PRIORITIES.includes(priority as (typeof LEAD_PRIORITIES)[number])) {
-      return NextResponse.json({ error: 'Prioridad no valida' }, { status: 400 })
+      return NextResponse.json({ error: 'Prioridad no válida' }, { status: 400 })
     }
 
-    const supabase = createAdminSupabase()
-    const { data, error } = await supabase
-      .from('leads')
-      .insert({
-        full_name: fullName,
-        phone,
-        email,
-        notes,
-        source,
-        intent,
-        priority,
-        property_ref: propertyRef,
-        sale_timeline: saleTimeline,
-        status: 'nuevo',
-      })
-      .select('*')
-      .single()
+    const stored = appendLocalLead({
+      fullName,
+      phone,
+      email,
+      notes,
+      source,
+      intent,
+      priority,
+      propertyRef,
+      saleTimeline,
+      status: 'nuevo',
+    })
 
-    if (error) throw error
+    const lead = rowsToLeads([toLeadRow(stored)])[0]
 
-    const lead = rowsToLeads([data as LeadRow])[0]
     const emailResult = await sendLeadNotificationEmail({
       full_name: fullName,
       phone,
@@ -118,41 +122,39 @@ export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json()
     const id = String(body.id || '').trim()
-    if (!id) return NextResponse.json({ error: 'ID no valido' }, { status: 400 })
+    if (!id) return NextResponse.json({ error: 'ID no válido' }, { status: 400 })
 
-    const updates: Record<string, string | null> = {}
+    const leads = readLocalLeads()
+    const index = leads.findIndex((lead) => lead.id === id)
+    if (index === -1) return NextResponse.json({ error: 'Lead no encontrado' }, { status: 404 })
+
+    const current = leads[index]
+    const updated = { ...current, updatedAt: new Date().toISOString() }
+
     if (body.status) {
       const status = String(body.status)
       if (!LEAD_STATUSES.includes(status as (typeof LEAD_STATUSES)[number])) {
-        return NextResponse.json({ error: 'Estado no valido' }, { status: 400 })
+        return NextResponse.json({ error: 'Estado no válido' }, { status: 400 })
       }
-      updates.status = status
+      updated.status = status
       if (status === 'contactado' && !body.firstResponseAt) {
-        updates.first_response_at = new Date().toISOString()
+        updated.firstResponseAt = new Date().toISOString()
       }
     }
     if (body.priority) {
       const priority = String(body.priority)
       if (!LEAD_PRIORITIES.includes(priority as (typeof LEAD_PRIORITIES)[number])) {
-        return NextResponse.json({ error: 'Prioridad no valida' }, { status: 400 })
+        return NextResponse.json({ error: 'Prioridad no válida' }, { status: 400 })
       }
-      updates.priority = priority
+      updated.priority = priority
     }
-    if (body.notes !== undefined) updates.notes = String(body.notes || '').trim() || null
-    if (body.assignedTo !== undefined) updates.assigned_to = String(body.assignedTo || '').trim() || null
-    if (body.lastContactAt) updates.last_contact_at = new Date(body.lastContactAt).toISOString()
-    updates.updated_at = new Date().toISOString()
+    if (body.notes !== undefined) updated.notes = String(body.notes || '').trim() || null
+    if (body.assignedTo !== undefined) updated.assignedTo = String(body.assignedTo || '').trim() || null
+    if (body.lastContactAt) updated.lastContactAt = new Date(body.lastContactAt).toISOString()
 
-    const supabase = createAdminSupabase()
-    const { data, error } = await supabase
-      .from('leads')
-      .update(updates)
-      .eq('id', id)
-      .select('*')
-      .single()
-
-    if (error) throw error
-    return NextResponse.json(rowsToLeads([data as LeadRow])[0])
+    leads[index] = updated
+    writeLocalLeads(leads)
+    return NextResponse.json(rowsToLeads([toLeadRow(updated)])[0])
   } catch {
     return NextResponse.json({ error: 'Error al actualizar lead' }, { status: 500 })
   }
@@ -166,15 +168,11 @@ export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json()
     const id = String(body.id || '').trim()
-    if (!id) return NextResponse.json({ error: 'ID no valido' }, { status: 400 })
+    if (!id) return NextResponse.json({ error: 'ID no válido' }, { status: 400 })
 
-    const supabase = createAdminSupabase()
-    const { error } = await supabase.from('leads').delete().eq('id', id)
-
-    if (error) throw error
+    writeLocalLeads(readLocalLeads().filter((lead) => lead.id !== id))
     return NextResponse.json({ ok: true })
   } catch {
     return NextResponse.json({ error: 'Error al eliminar lead' }, { status: 500 })
   }
 }
-

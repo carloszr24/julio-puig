@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Property } from '@/types'
-import { MAX_FEATURED_ON_HOME, MAX_PROPERTY_IMAGES } from '@/lib/property-db'
+import { MAX_FEATURED_ON_HOME, MAX_PROPERTY_IMAGES } from '@/lib/property-constants'
 import { formatPrice, OPERATION_LABELS, PROPERTY_OPERATIONS, PROPERTY_PROVINCES, PROPERTY_STATUSES, PROPERTY_TYPES, STATUS_BADGE_CLASSES_ADMIN, STATUS_LABELS, TYPE_LABELS } from '@/lib/utils'
 import { getPropertyProvince } from '@/lib/property-location'
 import { getPropertyExtras, type PropertyExtraId } from '@/lib/property-extras'
@@ -23,18 +23,6 @@ function safeParseImages(images: string): string[] {
       .map((s) => s.trim())
       .filter(Boolean)
   }
-}
-
-function isSupabasePublicUrl(url: string): boolean {
-  return url.includes('/storage/v1/object/public/property-images/')
-}
-
-function supabasePathFromPublicUrl(url: string): string | null {
-  // https://<ref>.supabase.co/storage/v1/object/public/property-images/<path>
-  const marker = '/storage/v1/object/public/property-images/'
-  const idx = url.indexOf(marker)
-  if (idx === -1) return null
-  return url.slice(idx + marker.length)
 }
 
 const emptyForm = {
@@ -272,19 +260,8 @@ export default function AdminPage() {
     return results
   }
 
-  const deleteRemovedImages = async (finalUrls: string[]) => {
-    const removed = initialImageUrls.filter((u) => !finalUrls.includes(u))
-    for (const url of removed) {
-      if (!isSupabasePublicUrl(url)) continue
-      const path = supabasePathFromPublicUrl(url)
-      if (!path) continue
-      await fetch('/api/uploads/property-image', {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path }),
-      })
-    }
+  const deleteRemovedImages = async (_finalUrls: string[]) => {
+    // En modo local las imágenes se gestionan en public/images y data/properties.json
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -542,7 +519,7 @@ export default function AdminPage() {
               <div>
                 <label className="text-xs text-stone-500 block mb-1.5">Ubicación *</label>
                 <input name="location" value={form.location} onChange={handleChange} required
-                  placeholder="Ej: Fuente Cisneros, Alcorcón"
+                  placeholder="Ej: Puente Rojo, Coria del Río"
                   className="w-full border border-stone-200 px-3 py-2.5 text-sm focus:outline-none focus:border-stone-900" />
               </div>
 

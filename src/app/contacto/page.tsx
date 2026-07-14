@@ -3,14 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import {
+  BUSINESS_HOURS,
   CONTACT,
   OFFICES,
   emailHref,
   hasEmail,
-  landlineHref,
   mapsHref,
   phoneHref,
-  secondaryMapsHref,
   whatsappDisplay,
   whatsappHref,
 } from '@/lib/contact'
@@ -28,6 +27,15 @@ function PhoneIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5" aria-hidden="true">
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.87 19.87 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.87 19.87 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.35 1.77.68 2.6a2 2 0 0 1-.45 2.11L8.1 9.91a16 16 0 0 0 6 6l1.48-1.24a2 2 0 0 1 2.11-.45c.83.33 1.7.56 2.6.68A2 2 0 0 1 22 16.92Z" />
+    </svg>
+  )
+}
+
+function ClockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-5 w-5" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
     </svg>
   )
 }
@@ -81,13 +89,13 @@ export default function ContactoPage() {
   }
 
   return (
-    <div className="pt-24 md:pt-[8.5rem]">
-      <div className="bg-stone-950 text-white py-20 px-6 md:px-10">
+    <div className="pt-[4.75rem] md:pt-24">
+      <div className="bg-brand-burgundy text-white py-20 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
-          <p className="text-gold text-xs tracking-[0.3em] uppercase mb-4">Contacto</p>
-          <h1 className="font-display text-5xl md:text-6xl font-light">Estamos aquí para ayudarte</h1>
+          <p className="text-brand-burgundy text-[10px] tracking-[0.22em] uppercase mb-4 font-light">Contacto</p>
+          <h1 className="font-display text-5xl md:text-6xl font-light">Estamos a su disposición</h1>
           <p className="text-stone-400 mt-4 text-lg font-light max-w-md">
-            Escríbenos o llámanos. Te responderemos en menos de 24 horas.
+            Escríbanos o llámenos. Le responderemos en menos de 24 horas.
           </p>
         </div>
       </div>
@@ -99,8 +107,8 @@ export default function ContactoPage() {
               <div className="bg-emerald-50 border border-emerald-200 p-10 text-center">
                 <span className="text-4xl mb-4 block">✓</span>
                 <h3 className="font-medium text-emerald-800 text-lg mb-2">Mensaje enviado</h3>
-                <p className="text-emerald-600 text-sm">
-                  Nos pondremos en contacto contigo en las próximas horas.
+                <p className="text-emerald-600 text-sm font-light">
+                  Nos pondremos en contacto con usted en las próximas horas.
                 </p>
                 <button
                   onClick={() => { setSent(false); setForm({ nombre: '', email: '', telefono: '', mensaje: '' }) }}
@@ -121,8 +129,8 @@ export default function ContactoPage() {
                       value={form.nombre}
                       onChange={handleChange}
                       required
-                      placeholder="Tu nombre"
-                      className="w-full border border-stone-200 px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-colors"
+                      placeholder="Su nombre"
+                      className="w-full border border-stone-200 px-4 py-3 text-sm font-light focus:outline-none focus:border-brand-burgundy transition-colors"
                     />
                   </div>
                   <div>
@@ -133,8 +141,8 @@ export default function ContactoPage() {
                       value={form.email}
                       onChange={handleChange}
                       required
-                      placeholder="tu@email.com"
-                      className="w-full border border-stone-200 px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-colors"
+                      placeholder="su@email.com"
+                      className="w-full border border-stone-200 px-4 py-3 text-sm font-light focus:outline-none focus:border-brand-burgundy transition-colors"
                     />
                   </div>
                 </div>
@@ -158,8 +166,8 @@ export default function ContactoPage() {
                     onChange={handleChange}
                     required
                     rows={6}
-                    placeholder="Cuéntanos qué necesitas..."
-                    className="w-full border border-stone-200 px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-colors resize-none"
+                    placeholder="Cuéntenos qué necesita..."
+                    className="w-full border border-stone-200 px-4 py-3 text-sm font-light focus:outline-none focus:border-brand-burgundy transition-colors resize-none"
                   />
                 </div>
 
@@ -193,18 +201,8 @@ export default function ContactoPage() {
                   <span className="shrink-0 text-stone-500"><PhoneIcon /></span>
                   <div>
                     <p className="text-xs text-stone-400 tracking-wide mb-1">{CONTACT.phone.label}</p>
-                    <a href={phoneHref} className="text-stone-700 text-sm hover:text-stone-900 transition-colors">
+                    <a href={phoneHref} className="text-stone-700 text-sm font-light hover:text-stone-900 transition-colors">
                       {CONTACT.phone.display}
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <span className="shrink-0 text-stone-500"><PhoneIcon /></span>
-                  <div>
-                    <p className="text-xs text-stone-400 tracking-wide mb-1">{CONTACT.landline.label}</p>
-                    <a href={landlineHref} className="text-stone-700 text-sm hover:text-stone-900 transition-colors">
-                      {CONTACT.landline.display}
                     </a>
                   </div>
                 </div>
@@ -248,7 +246,7 @@ export default function ContactoPage() {
                       href={mapsHref}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-stone-700 text-sm hover:text-stone-900 transition-colors"
+                      className="text-stone-700 text-sm font-light hover:text-stone-900 transition-colors"
                     >
                       {OFFICES.primary.line1}
                       <br />
@@ -258,19 +256,17 @@ export default function ContactoPage() {
                 </div>
 
                 <div className="flex gap-4">
-                  <span className="shrink-0 text-stone-500"><MapPinIcon /></span>
+                  <span className="shrink-0 text-stone-500"><ClockIcon /></span>
                   <div>
-                    <p className="text-xs text-stone-400 tracking-wide mb-1">{OFFICES.secondary.label}</p>
-                    <a
-                      href={secondaryMapsHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-stone-700 text-sm hover:text-stone-900 transition-colors"
-                    >
-                      {OFFICES.secondary.line1}
-                      <br />
-                      {OFFICES.secondary.line2}
-                    </a>
+                    <p className="text-xs text-stone-400 tracking-wide mb-2">{BUSINESS_HOURS.label}</p>
+                    <ul className="space-y-1 text-sm font-light text-stone-700">
+                      {BUSINESS_HOURS.schedule.map((row) => (
+                        <li key={row.day} className="flex justify-between gap-6 min-w-[12rem]">
+                          <span>{row.day}</span>
+                          <span className={row.hours === 'Cerrado' ? 'text-stone-400' : ''}>{row.hours}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
