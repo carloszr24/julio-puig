@@ -10,7 +10,6 @@ import type { PropertyMapPoint } from '@/lib/property-map'
 import { cn } from '@/lib/utils'
 
 const SEARCH_TYPES = ['casa', 'piso', 'local', 'terreno'] as const
-const BEDROOM_OPTIONS = ['1', '2', '3', '4'] as const
 
 const TYPE_TO_VALORACION: Record<string, string> = {
   casa: 'Casa',
@@ -41,7 +40,6 @@ export function PropertyIntentSearch({
   )
   const [pin, setPin] = useState<{ latitude: number; longitude: number } | null>(null)
   const [propertyType, setPropertyType] = useState<string>('')
-  const [bedrooms, setBedrooms] = useState<string>('')
 
   const isBuy = mode === 'buy'
   const isModal = variant === 'modal'
@@ -50,9 +48,8 @@ export function PropertyIntentSearch({
     const params = new URLSearchParams()
     params.set('operation', 'venta')
     if (propertyType) params.set('type', propertyType)
-    if (bedrooms) params.set('bedrooms', bedrooms)
     return `/propiedades?${params.toString()}`
-  }, [propertyType, bedrooms])
+  }, [propertyType])
 
   const navigateAway = (href: string) => {
     onClose?.()
@@ -133,31 +130,6 @@ export function PropertyIntentSearch({
               ))}
             </div>
           </div>
-
-          {isBuy && (
-            <div>
-              <p className="mb-3 text-[10px] font-light uppercase tracking-[0.18em] text-stone-500">
-                Habitaciones (mínimo)
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {BEDROOM_OPTIONS.map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setBedrooms(bedrooms === n ? '' : n)}
-                    className={cn(
-                      'min-w-[3rem] border px-4 py-2 text-xs font-light transition-colors',
-                      bedrooms === n
-                        ? 'border-brand-burgundy bg-brand-burgundy text-white'
-                        : 'border-stone-200 bg-white text-stone-600 hover:border-stone-400'
-                    )}
-                  >
-                    {n === '4' ? '4+' : n}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
 
           <div className="flex flex-col gap-3 pt-2">
             {isBuy ? (
