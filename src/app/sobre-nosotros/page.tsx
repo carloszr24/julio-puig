@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { AGENT, LEGAL, OFFICES } from '@/lib/contact'
+import { LEGAL } from '@/lib/contact'
 import {
   HOME_EXTRA_SERVICES,
   PARTNER_SERVICES,
@@ -122,32 +122,22 @@ export default function SobreNosotrosPage() {
               Una inmobiliaria construida sobre la confianza
             </h1>
             <p className="mt-6 text-base font-light leading-relaxed text-stone-500 md:text-lg">
-              En {AGENT.name} acompañamos a familias y particulares en las decisiones más importantes de su
-              vida. Sin prisa, sin presión, con la honestidad que cada cliente merece.
+              Acompañamos a familias y particulares en las decisiones más importantes de su vida. Sin prisa,
+              sin presión, con la honestidad que cada cliente merece.
             </p>
           </div>
 
           <div className="my-14 h-px bg-stone-200" />
 
           <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
-            <div className="relative">
-              <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
-                <Image
-                  src="/images/julio.jpg"
-                  alt={`${LEGAL.ownerName} — ${AGENT.name}`}
-                  fill
-                  className="object-cover object-top"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/45 via-transparent to-transparent" />
-                <p className="absolute bottom-5 left-5 text-sm font-light text-white/90">
-                  {OFFICES.primary.label}, Coria del Río
-                </p>
-              </div>
-              <div className="absolute -bottom-5 right-6 border border-stone-200 bg-white px-5 py-4 shadow-sm md:right-8">
-                <p className="font-display text-3xl font-light text-brand-burgundy">41100</p>
-                <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-stone-400">Coria del Río</p>
-              </div>
+            <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
+              <Image
+                src="/images/julio.jpg"
+                alt={LEGAL.ownerName}
+                fill
+                className="object-cover object-[center_18%]"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
             </div>
 
             <div className="lg:pt-4">
@@ -156,7 +146,7 @@ export default function SobreNosotrosPage() {
               </h2>
               <div className="mt-6 space-y-5 text-sm font-light leading-relaxed text-stone-600 md:text-base">
                 <p>
-                  {AGENT.name} nace con una idea sencilla: que comprar, vender o alquilar una vivienda no
+                  Esta inmobiliaria nace con una idea sencilla: que comprar, vender o alquilar una vivienda no
                   debería ser un proceso frío ni apresurado. Creemos en un enfoque humano, pausado y
                   transparente, en el que usted entienda cada paso y se sienta acompañado en todo momento.
                 </p>
@@ -252,8 +242,7 @@ export default function SobreNosotrosPage() {
             <p className="mb-3 text-[10px] font-light uppercase tracking-[0.22em] text-brand-burgundy">El equipo</p>
             <h2 className="font-display text-3xl font-light text-stone-900 md:text-4xl">Personas, no departamentos</h2>
             <p className="mt-4 max-w-2xl text-sm font-light leading-relaxed text-stone-500 md:text-base">
-              Un equipo reducido y cohesionado, preparado para atenderle con dedicación. Las fotografías se
-              irán incorporando en esta sección.
+              Somos pocas personas, pero muy implicadas. Aquí irán las fotos del equipo en cuanto las tengamos.
             </p>
 
             <ul className="mt-12 grid grid-cols-2 gap-10 md:grid-cols-4 md:gap-8">
@@ -272,16 +261,16 @@ export default function SobreNosotrosPage() {
 
           <div className="mt-20 flex flex-col items-start justify-between gap-6 border border-stone-200 bg-white p-8 md:flex-row md:items-center md:p-10">
             <div>
-              <h3 className="font-display text-2xl font-light text-stone-900">¿Desea que hablemos?</h3>
+              <h3 className="font-display text-2xl font-light text-stone-900">¿Hablamos?</h3>
               <p className="mt-2 max-w-md text-sm font-light leading-relaxed text-stone-500">
-                Sin compromiso. Una primera conversación siempre es gratuita y confidencial.
+                Cuéntenos su caso. La primera conversación es gratuita y sin compromiso.
               </p>
             </div>
             <Link
               href="/contacto"
               className="inline-flex shrink-0 items-center gap-2 border border-brand-burgundy px-8 py-3.5 text-[10px] font-light uppercase tracking-[0.14em] text-brand-burgundy transition-colors hover:bg-brand-burgundy hover:text-white"
             >
-              Contactar con el equipo
+              Escríbanos
               <span aria-hidden="true">→</span>
             </Link>
           </div>
