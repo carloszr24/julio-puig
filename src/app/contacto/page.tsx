@@ -271,27 +271,6 @@ export default function ContactoPage() {
                 </div>
               </div>
             </div>
-
-            <div className="border-t border-stone-100 pt-8">
-              <p className="text-xs text-stone-400 tracking-widest uppercase mb-4">Otros canales</p>
-              <div className="flex flex-wrap gap-4">
-                {[
-                  { name: 'WhatsApp', href: whatsappHref },
-                  { name: 'Google Maps', href: mapsHref },
-                  ...(hasEmail ? [{ name: 'Email', href: emailHref }] : []),
-                ].map((social) => (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-stone-500 hover:text-stone-900 transition-colors"
-                  >
-                    {social.name}
-                  </a>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>
