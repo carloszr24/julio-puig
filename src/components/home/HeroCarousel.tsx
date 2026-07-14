@@ -6,8 +6,8 @@ export function HeroCarousel() {
   return (
     <div className="absolute inset-0 z-0">
       <Image
-        src="/images/properties/puente-rojo/1.webp"
-        alt="Vivienda en Coria del Río, Sevilla"
+        src="/images/coria.jpg"
+        alt="Coria del Río, Sevilla"
         fill
         priority
         quality={80}
