@@ -1,8 +1,8 @@
-'use client'
-
+import Image from 'next/image'
 import Link from 'next/link'
+import { AGENT, OFFICES } from '@/lib/contact'
 import { SERVICE_ITEMS } from '@/data/services'
-import { BrandName } from '@/components/BrandName'
+import { TEAM_MEMBERS, TEAM_QUOTE } from '@/data/team'
 
 function HomeIcon() {
   return (
@@ -40,115 +40,185 @@ function ClipboardIcon() {
   )
 }
 
-function KeyIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-5 w-5" aria-hidden="true">
-      <circle cx="8" cy="15" r="4" />
-      <path d="M11 12l9-9M19 5l2 2" />
-    </svg>
-  )
-}
+const serviceIcons = [HomeIcon, ScaleIcon, BankIcon, ClipboardIcon]
 
-function GlobeIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-5 w-5" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
-    </svg>
-  )
-}
-
-const serviceIcons = [HomeIcon, ScaleIcon, BankIcon, ClipboardIcon, KeyIcon, GlobeIcon]
-
-const services = SERVICE_ITEMS.map((service, index) => ({
+const featuredServices = SERVICE_ITEMS.slice(0, 4).map((service, index) => ({
   ...service,
   icon: serviceIcons[index] ?? HomeIcon,
 }))
 
+function TeamAvatar({ name, initials, photo }: { name: string; initials: string; photo?: string | null }) {
+  if (photo) {
+    return (
+      <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-full border border-stone-200 bg-stone-100">
+        <Image src={photo} alt={name} fill className="object-cover" sizes="96px" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-stone-200 bg-stone-100 text-xl font-light tracking-wide text-stone-500">
+      {initials}
+    </div>
+  )
+}
+
 export default function SobreNosotrosPage() {
   return (
     <div className="pt-[4.75rem] md:pt-24">
-      <section className="bg-brand-burgundy text-white py-20 px-6 md:px-10">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-[10px] tracking-[0.22em] uppercase mb-4 font-light text-stone-200/80">Quiénes somos</p>
-          <h1 className="font-display text-5xl md:text-6xl font-light">
-            Sobre <BrandName />
-          </h1>
-          <p className="text-stone-200/85 mt-4 text-lg font-light max-w-2xl leading-relaxed">
-            Una inmobiliaria de confianza con amplia experiencia en el sector.
-          </p>
-        </div>
-      </section>
+      {/* Intro + historia */}
+      <section className="border-b border-stone-200 px-6 py-16 md:px-10 md:py-24">
+        <div className="mx-auto max-w-7xl">
+          <nav className="mb-8 flex items-center gap-2 text-xs font-light text-stone-400">
+            <Link href="/" className="transition-colors hover:text-stone-600">
+              Inicio
+            </Link>
+            <span>/</span>
+            <span className="text-stone-600">Sobre nosotros</span>
+          </nav>
 
-      <section className="py-20 px-6 md:px-10 max-w-4xl mx-auto">
-        <div className="space-y-6 text-stone-600 text-lg leading-relaxed font-light text-justify">
-          <p>
-            Le ayudamos a vender, comprar o alquilar, ofreciendo un servicio integral durante todo el
-            proceso.
-          </p>
-          <p>
-            Además de la intermediación inmobiliaria, gestionamos certificados energéticos, revisamos y
-            tramitamos la documentación necesaria, y le acompañamos en todos los trámites relacionados con
-            el Registro de la Propiedad y la notaría.
-          </p>
-          <p>
-            También prestamos apoyo en situaciones que requieren una gestión más especializada, como
-            herencias, adjudicaciones o cualquier operación inmobiliaria que implique trámites complejos.
-            Nuestro objetivo es que pueda realizar la operación con seguridad, tranquilidad y el respaldo de
-            profesionales que se encargan de todo el proceso.
-          </p>
-        </div>
-      </section>
-
-      <section className="py-24 px-6 md:px-10 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-          {[
-            { value: 'Transparencia', desc: 'Información clara y honesta en cada paso del proceso.' },
-            { value: 'Proximidad', desc: 'Le acompañamos personalmente desde el primer contacto.' },
-            { value: 'Experiencia', desc: 'Amplia trayectoria ayudando a clientes en todo tipo de operaciones.' },
-          ].map((item) => (
-            <div key={item.value} className="p-8">
-              <div className="w-px h-10 bg-brand-burgundy mx-auto mb-6" />
-              <h3 className="font-display text-2xl font-light text-stone-900 mb-3">{item.value}</h3>
-              <p className="text-stone-500 text-sm leading-relaxed font-light">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-stone-50 py-24 px-6 md:px-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-brand-burgundy text-[10px] tracking-[0.22em] uppercase mb-4 font-light">Lo que hacemos</p>
-            <h2 className="section-title">Servicios inmobiliarios</h2>
+          <div className="max-w-3xl">
+            <h1 className="font-display text-4xl font-light leading-tight text-stone-900 md:text-5xl lg:text-6xl">
+              Una inmobiliaria construida sobre la confianza
+            </h1>
+            <p className="mt-6 text-base font-light leading-relaxed text-stone-500 md:text-lg">
+              En {AGENT.name} acompañamos a familias y particulares en las decisiones más importantes de su
+              vida. Sin prisa, sin presión, con la honestidad que cada cliente merece.
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service) => (
+
+          <div className="my-14 h-px bg-stone-200" />
+
+          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="relative">
+              <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
+                <Image
+                  src="/images/coria.jpg"
+                  alt={`Oficina ${AGENT.name} en Coria del Río`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/50 via-transparent to-transparent" />
+                <p className="absolute bottom-5 left-5 text-sm font-light text-white/90">
+                  {OFFICES.primary.label}, Coria del Río
+                </p>
+              </div>
+              <div className="absolute -bottom-5 right-6 border border-stone-200 bg-white px-5 py-4 shadow-sm md:right-8">
+                <p className="font-display text-3xl font-light text-brand-burgundy">41100</p>
+                <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-stone-400">Coria del Río</p>
+              </div>
+            </div>
+
+            <div className="lg:pt-4">
+              <h2 className="font-display text-2xl font-light leading-snug text-stone-900 md:text-3xl">
+                Experiencia, cercanía y un trato personalizado en cada operación
+              </h2>
+              <div className="mt-6 space-y-5 text-sm font-light leading-relaxed text-stone-600 md:text-base">
+                <p>
+                  {AGENT.name} nace con una idea sencilla: que comprar, vender o alquilar una vivienda no
+                  debería ser un proceso frío ni apresurado. Creemos en un enfoque humano, pausado y
+                  transparente, en el que usted entienda cada paso y se sienta acompañado en todo momento.
+                </p>
+                <p>
+                  Sabemos que detrás de cada operación hay una decisión que afecta a su vida y a la de su
+                  familia. Por eso trabajamos con la misma dedicación en una primera consulta que en el cierre
+                  en notaría: escuchamos, informamos y actuamos con la máxima diligencia.
+                </p>
+                <p>
+                  Somos un equipo especializado en el mercado residencial de Coria del Río, el Aljarafe y la
+                  provincia de Sevilla. Conocemos la zona, sus barrios y las particularidades de cada
+                  operación, y ponemos ese conocimiento al servicio de quien confía en nosotros.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Servicios — 4 tarjetas */}
+      <section className="bg-stone-50 px-6 py-20 md:px-10 md:py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 max-w-2xl">
+            <p className="mb-3 text-[10px] font-light uppercase tracking-[0.22em] text-brand-burgundy">
+              Lo que hacemos
+            </p>
+            <h2 className="font-display text-3xl font-light text-stone-900 md:text-4xl">Servicios inmobiliarios</h2>
+            <p className="mt-4 text-sm font-light leading-relaxed text-stone-500 md:text-base">
+              Cuatro áreas de trabajo con las que le acompañamos de principio a fin.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {featuredServices.map((service) => (
               <div
                 key={service.title}
-                className="bg-white p-8 border border-stone-100 hover:border-brand-burgundy/30 transition-colors duration-300 group"
+                className="group border border-stone-200 bg-white p-8 transition-colors duration-300 hover:border-brand-burgundy/30"
               >
-                <span className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-md border border-stone-200 text-stone-600 group-hover:text-brand-burgundy transition-colors">
+                <span className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-sm border border-stone-200 text-stone-600 transition-colors group-hover:border-brand-burgundy/30 group-hover:text-brand-burgundy">
                   <service.icon />
                 </span>
-                <h3 className="font-display text-lg font-light text-stone-900 mb-3 group-hover:text-brand-burgundy transition-colors">
+                <h3 className="mb-3 font-display text-xl font-light text-stone-900 transition-colors group-hover:text-brand-burgundy">
                   {service.title}
                 </h3>
-                <p className="text-stone-500 text-sm leading-relaxed font-light">{service.desc}</p>
+                <p className="text-sm font-light leading-relaxed text-stone-500">{service.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-brand-burgundy text-white py-20 px-6 md:px-10 text-center">
-        <h2 className="font-display text-4xl font-light mb-6">¿Desea que hablemos?</h2>
-        <p className="text-stone-200/85 mb-10 max-w-md mx-auto font-light">
-          Cuéntenos su situación y encontraremos la mejor solución para usted.
-        </p>
-        <Link href="/contacto" className="inline-flex items-center justify-center bg-white text-brand-burgundy px-10 py-4 text-xs font-light tracking-[0.06em] uppercase hover:bg-stone-50 transition-colors">
-          Contactar ahora
-        </Link>
+      {/* Equipo — placeholders para fotos */}
+      <section className="border-t border-stone-200 px-6 py-20 md:px-10 md:py-24">
+        <div className="mx-auto max-w-7xl">
+          <blockquote className="border border-stone-200 bg-stone-50 px-8 py-10 md:px-12 md:py-12">
+            <p className="font-display text-2xl font-light leading-relaxed text-stone-800 md:text-3xl">
+              “{TEAM_QUOTE.text}”
+            </p>
+            <footer className="mt-6 text-sm font-light text-stone-500">
+              {TEAM_QUOTE.attribution}
+              <span className="text-stone-400"> — {TEAM_QUOTE.role}</span>
+            </footer>
+          </blockquote>
+
+          <div className="mt-20">
+            <p className="mb-3 text-[10px] font-light uppercase tracking-[0.22em] text-brand-burgundy">El equipo</p>
+            <h2 className="font-display text-3xl font-light text-stone-900 md:text-4xl">Personas, no departamentos</h2>
+            <p className="mt-4 max-w-2xl text-sm font-light leading-relaxed text-stone-500 md:text-base">
+              Un equipo reducido y cohesionado, preparado para atenderle con dedicación. Las fotografías se
+              irán incorporando en esta sección.
+            </p>
+
+            <ul className="mt-12 grid grid-cols-2 gap-10 md:grid-cols-4 md:gap-8">
+              {TEAM_MEMBERS.map((member) => (
+                <li key={member.id} className="text-center">
+                  <TeamAvatar name={member.name} initials={member.initials} photo={member.photo} />
+                  <p className="mt-5 font-display text-lg font-light text-stone-900">{member.name}</p>
+                  <p className="mt-1 text-sm font-light text-stone-500">{member.role}</p>
+                  {member.tenure && (
+                    <p className="mt-1 text-xs font-light text-stone-400">{member.tenure}</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="mt-20 flex flex-col items-start justify-between gap-6 border border-stone-200 bg-white p-8 md:flex-row md:items-center md:p-10">
+            <div>
+              <h3 className="font-display text-2xl font-light text-stone-900">¿Desea que hablemos?</h3>
+              <p className="mt-2 max-w-md text-sm font-light leading-relaxed text-stone-500">
+                Sin compromiso. Una primera conversación siempre es gratuita y confidencial.
+              </p>
+            </div>
+            <Link
+              href="/contacto"
+              className="inline-flex shrink-0 items-center gap-2 border border-brand-burgundy px-8 py-3.5 text-[10px] font-light uppercase tracking-[0.14em] text-brand-burgundy transition-colors hover:bg-brand-burgundy hover:text-white"
+            >
+              Contactar con el equipo
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </div>
       </section>
     </div>
   )
