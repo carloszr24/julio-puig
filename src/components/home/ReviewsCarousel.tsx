@@ -140,7 +140,7 @@ export function ReviewsCarousel() {
           <div className="mx-auto grid max-w-5xl grid-cols-1 gap-3 rounded-2xl border border-stone-200 bg-white p-3 shadow-sm sm:grid-cols-3 sm:gap-0 sm:p-2">
             {[
               { value: '+200', label: 'propiedades vendidas' },
-              { value: '< 60 días', label: 'tiempo medio de cierre' },
+              { value: '< 30 días', label: 'tiempo medio de cierre' },
               { value: '4,8', label: 'en Google' },
             ].map((stat, idx) => (
               <div
