@@ -135,7 +135,7 @@ export default function SobreNosotrosPage() {
                 src="/images/julio.jpg"
                 alt={LEGAL.ownerName}
                 fill
-                className="object-cover object-[center_18%]"
+                className="object-cover object-[center_10%]"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
