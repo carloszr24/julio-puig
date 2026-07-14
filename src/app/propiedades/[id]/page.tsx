@@ -6,6 +6,8 @@ import { getExtraLabel, getPropertyExtras, propertyHasExtra } from '@/lib/proper
 import { formatPrice, OPERATION_LABELS, parseImages, STATUS_BADGE_CLASSES, STATUS_LABELS, TYPE_LABELS } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import { PropertyImageViewer } from '@/components/properties/PropertyImageViewer'
+import { PropertyMapSection } from '@/components/maps/PropertyMapLoader'
+import { toPropertyMapPoint } from '@/lib/property-map'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,6 +30,7 @@ export default async function PropertyDetailPage({
   if (!property) notFound()
 
   const images = parseImages(property.images)
+  const mapPoint = toPropertyMapPoint(property)
   const floorLabel = property.floor?.trim()
   const hasElevator = propertyHasExtra(property, 'elevator')
   const showFloorCard = Boolean(floorLabel || hasElevator)
@@ -105,6 +108,12 @@ export default async function PropertyDetailPage({
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {mapPoint && (
+              <div className="mt-10">
+                <PropertyMapSection points={[mapPoint]} title="Ubicación" />
               </div>
             )}
           </div>

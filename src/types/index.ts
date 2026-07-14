@@ -3,6 +3,9 @@ export interface Property {
   title: string
   price: number
   location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
   province?: string | null
   type: string
   operation?: string
@@ -81,6 +84,9 @@ export interface PropertyFormData {
   title: string
   price: string
   location: string
+  address?: string | null
+  latitude?: string | null
+  longitude?: string | null
   province?: string | null
   type: string
   operation: string

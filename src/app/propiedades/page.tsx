@@ -3,6 +3,8 @@ import { filterProperties, getPublicProperties } from '@/lib/properties-store'
 import { listProvincesFromProperties } from '@/lib/property-location'
 import { PropertyCard } from '@/components/properties/PropertyCard'
 import { PropertyFilters } from '@/components/properties/PropertyFilters'
+import { PropertyMapSection } from '@/components/maps/PropertyMapLoader'
+import { toPropertyMapPoints } from '@/lib/property-map'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,6 +29,7 @@ export default async function PropiedadesPage({
   const allProperties = await getPublicProperties()
   const availableProvinces = listProvincesFromProperties(allProperties)
   const properties = filterProperties(allProperties, searchParams)
+  const mapPoints = toPropertyMapPoints(properties)
 
   return (
     <div className="pt-[4.75rem] md:pt-24">
@@ -46,6 +49,10 @@ export default async function PropiedadesPage({
       </Suspense>
 
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-14">
+        {mapPoints.length > 0 && (
+          <PropertyMapSection points={mapPoints} className="mb-14" title="Mapa de propiedades" />
+        )}
+
         {properties.length === 0 ? (
           <div className="border border-dashed border-stone-200 py-32 text-center">
             <p className="mb-2 text-lg text-stone-400">Sin resultados</p>

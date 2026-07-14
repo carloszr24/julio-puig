@@ -56,6 +56,9 @@ export type PropertyInput = {
   title: string
   price: string | number
   location: string
+  address?: string | null
+  latitude?: string | number | null
+  longitude?: string | number | null
   province?: string | null
   type: string
   operation?: string
@@ -83,6 +86,12 @@ export type PropertyInput = {
   featured?: boolean
 }
 
+function parseCoordinate(value: string | number | null | undefined): number | null {
+  if (value === undefined || value === null || value === '') return null
+  const parsed = typeof value === 'number' ? value : parseFloat(String(value))
+  return Number.isFinite(parsed) ? parsed : null
+}
+
 export function inputToProperty(input: PropertyInput, existing?: Property): Property {
   const imagesStr = Array.isArray(input.images) ? JSON.stringify(input.images) : String(input.images)
   const extras = normalizeExtraIds(input.extras ?? [])
@@ -94,6 +103,9 @@ export function inputToProperty(input: PropertyInput, existing?: Property): Prop
     title: input.title,
     price: typeof input.price === 'number' ? input.price : parseFloat(String(input.price)),
     location: input.location,
+    address: input.address?.trim() || null,
+    latitude: parseCoordinate(input.latitude),
+    longitude: parseCoordinate(input.longitude),
     province: input.province?.trim() || null,
     type: input.type,
     operation: input.operation || 'venta',

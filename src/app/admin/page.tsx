@@ -7,6 +7,7 @@ import { formatPrice, OPERATION_LABELS, PROPERTY_OPERATIONS, PROPERTY_PROVINCES,
 import { getPropertyProvince } from '@/lib/property-location'
 import { getPropertyExtras, type PropertyExtraId } from '@/lib/property-extras'
 import { ExtrasDropdown } from '@/components/admin/ExtrasDropdown'
+import { AdminLocationPicker } from '@/components/admin/AdminLocationPicker'
 import { cn } from '@/lib/utils'
 
 type ImageItem =
@@ -29,6 +30,9 @@ const emptyForm = {
   title: '',
   price: '',
   location: '',
+  address: '',
+  latitude: '',
+  longitude: '',
   province: '',
   type: 'piso',
   operation: 'venta',
@@ -178,6 +182,9 @@ export default function AdminPage() {
       title: p.title,
       price: p.price.toString(),
       location: p.location,
+      address: p.address || '',
+      latitude: p.latitude?.toString() || '',
+      longitude: p.longitude?.toString() || '',
       province: p.province || getPropertyProvince(p) || '',
       type: p.type,
       operation: p.operation || 'venta',
@@ -519,9 +526,20 @@ export default function AdminPage() {
               <div>
                 <label className="text-xs text-stone-500 block mb-1.5">Ubicación *</label>
                 <input name="location" value={form.location} onChange={handleChange} required
-                  placeholder="Ej: Puente Rojo, Coria del Río"
+                  placeholder="Ej: Puente Rojo – Aljarafe, Coria del Río"
                   className="w-full border border-stone-200 px-3 py-2.5 text-sm focus:outline-none focus:border-stone-900" />
               </div>
+
+              <AdminLocationPicker
+                address={form.address}
+                province={form.province}
+                latitude={form.latitude}
+                longitude={form.longitude}
+                onAddressChange={(value) => setForm((prev) => ({ ...prev, address: value }))}
+                onCoordinatesChange={(latitude, longitude) =>
+                  setForm((prev) => ({ ...prev, latitude, longitude }))
+                }
+              />
 
               <div>
                 <label className="text-xs text-stone-500 block mb-1.5">Provincia *</label>
