@@ -21,10 +21,17 @@ type DraggableMarker = {
   onMove: (latitude: number, longitude: number) => void
 }
 
+type FocusCenter = {
+  latitude: number
+  longitude: number
+  zoom?: number
+}
+
 type Props = {
   points?: PropertyMapPoint[]
   className?: string
   draggable?: DraggableMarker | null
+  focusCenter?: FocusCenter | null
 }
 
 function escapeHtml(value: string) {
@@ -51,7 +58,7 @@ function buildPopupHtml(point: PropertyMapPoint) {
   `
 }
 
-export default function PropertyMap({ points = [], className, draggable = null }: Props) {
+export default function PropertyMap({ points = [], className, draggable = null, focusCenter = null }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
   const markersLayerRef = useRef<L.LayerGroup | null>(null)
@@ -136,6 +143,12 @@ export default function PropertyMap({ points = [], className, draggable = null }
       map.fitBounds(bounds, { padding: [48, 48], maxZoom: 15, animate: false })
     }
   }, [points, draggable])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !focusCenter || draggable) return
+    map.setView([focusCenter.latitude, focusCenter.longitude], focusCenter.zoom ?? 14, { animate: true })
+  }, [focusCenter, draggable])
 
   return (
     <div className={cn('property-map-shell', className)}>

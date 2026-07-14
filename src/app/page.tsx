@@ -4,7 +4,6 @@ import { ReviewsCarousel } from '@/components/home/ReviewsCarousel'
 import { FeaturedPropertiesGrid } from '@/components/home/FeaturedPropertiesGrid'
 import { HeroCarousel } from '@/components/home/HeroCarousel'
 import { ScrollHint } from '@/components/home/ScrollHint'
-import { ValoracionGratuitaModal } from '@/components/home/ValoracionGratuitaModal'
 import { BrandName } from '@/components/BrandName'
 
 export const dynamic = 'force-dynamic'
@@ -81,15 +80,17 @@ export default async function HomePage() {
               style={{ animationDelay: '0.2s', opacity: 0, animationFillMode: 'forwards' }}
             >
               <Link
-                href="/propiedades"
+                href="/comprar"
                 className="btn-gold w-full sm:flex-1 sm:min-w-0 min-h-[3rem] md:min-h-[3.1rem] px-8 py-3.5 text-xs md:text-sm text-center border border-transparent box-border"
               >
                 Deseo comprar
               </Link>
-              <ValoracionGratuitaModal
-                triggerLabel="Deseo vender"
-                triggerClassName="inline-flex w-full sm:flex-1 sm:min-w-0 min-h-[3rem] md:min-h-[3.1rem] items-center justify-center px-8 py-3.5 text-xs md:text-sm tracking-[0.06em] uppercase font-light border border-white/80 text-white box-border hover:bg-white hover:text-brand-burgundy transition-colors duration-200"
-              />
+              <Link
+                href="/vender"
+                className="inline-flex w-full sm:flex-1 sm:min-w-0 min-h-[3rem] md:min-h-[3.1rem] items-center justify-center px-8 py-3.5 text-xs md:text-sm tracking-[0.06em] uppercase font-light border border-white/80 text-white box-border hover:bg-white hover:text-brand-burgundy transition-colors duration-200"
+              >
+                Deseo vender
+              </Link>
             </div>
           </div>
         </div>

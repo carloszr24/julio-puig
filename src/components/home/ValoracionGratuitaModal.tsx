@@ -62,9 +62,14 @@ const conditionOptions = [
 type Props = {
   triggerClassName?: string
   triggerLabel?: string
+  seedForm?: Partial<ValoracionForm>
 }
 
-export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 'Deseo vender' }: Props) {
+export function ValoracionGratuitaModal({
+  triggerClassName = '',
+  triggerLabel = 'Deseo vender',
+  seedForm,
+}: Props) {
   const [mounted, setMounted] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -98,6 +103,14 @@ export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 
     setStep(1)
     setError('')
     setForm(initialForm)
+  }
+
+  const openModal = () => {
+    setForm({ ...initialForm, ...seedForm })
+    setSubmitted(false)
+    setStep(1)
+    setError('')
+    setIsOpen(true)
   }
 
   const validateCurrentStep = () => {
@@ -184,7 +197,7 @@ export function ValoracionGratuitaModal({ triggerClassName = '', triggerLabel = 
     <>
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={openModal}
         className={triggerClassName || 'btn-outline px-10 py-4 text-[calc(0.875rem+4pt)] tracking-wide'}
       >
         {triggerLabel}
