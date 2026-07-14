@@ -6,7 +6,6 @@ import { FeaturedPropertiesGrid } from '@/components/home/FeaturedPropertiesGrid
 import { HeroCarousel } from '@/components/home/HeroCarousel'
 import { ScrollHint } from '@/components/home/ScrollHint'
 import { HeroActions } from '@/components/home/HeroActions'
-import { BrandName } from '@/components/BrandName'
 
 export const dynamic = 'force-dynamic'
 
@@ -169,8 +168,7 @@ export default async function HomePage() {
               href="/contacto"
               className="inline-flex min-h-[3rem] items-center justify-center gap-1.5 rounded-sm border border-transparent bg-white px-10 py-3 text-xs font-light tracking-[0.06em] uppercase text-brand-burgundy hover:bg-stone-50 transition-colors duration-200"
             >
-              <span>Hable con</span>
-              <BrandName />
+              Hable con nuestro equipo
             </Link>
             <Link
               href="/propiedades"
