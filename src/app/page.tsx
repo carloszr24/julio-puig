@@ -60,7 +60,10 @@ export default async function HomePage() {
 
         <div className="relative z-10 flex flex-1 w-full items-center justify-center px-4 min-[400px]:px-6 -translate-y-8 md:-translate-y-4">
           <div className="text-center max-w-4xl mx-auto w-full">
-            <h1 className="font-display text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.35)] text-balance text-[clamp(2rem,5.5vw+0.5rem,3.75rem)] leading-[1.14] mb-6 animate-fade-up font-light">
+            <h1
+              className="font-display text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.35)] text-balance text-[clamp(2rem,5.5vw+0.5rem,3.75rem)] leading-[1.14] mb-6 animate-fade-up font-light"
+              style={{ opacity: 0, animationFillMode: 'forwards' }}
+            >
               Compre o venda su vivienda
               <span className="hidden md:inline"> </span>
               <br className="md:hidden" aria-hidden="true" />

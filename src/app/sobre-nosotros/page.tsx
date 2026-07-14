@@ -129,15 +129,17 @@ export default function SobreNosotrosPage() {
 
           <div className="my-14 h-px bg-stone-200" />
 
-          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
-              <Image
-                src="/images/julio.jpg"
-                alt={LEGAL.ownerName}
-                fill
-                className="object-cover object-[center_58%]"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
+              <div className="absolute left-1/2 top-[52%] h-[128%] w-[128%] -translate-x-1/2 -translate-y-1/2">
+                <Image
+                  src="/images/julio.jpg"
+                  alt={LEGAL.ownerName}
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+              </div>
             </div>
 
             <div className="lg:pt-4">
