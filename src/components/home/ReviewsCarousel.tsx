@@ -10,7 +10,7 @@ function StarRow() {
         <svg
           key={idx}
           viewBox="0 0 24 24"
-          className={`h-5 w-5 ${idx === 4 ? 'text-gold/80' : 'text-gold'}`}
+          className={`h-5 w-5 text-gold`}
           fill="currentColor"
           aria-hidden="true"
         >
@@ -137,15 +137,16 @@ export function ReviewsCarousel() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <div className="mx-auto grid max-w-3xl grid-cols-1 gap-3 rounded-2xl border border-stone-200 bg-white p-3 shadow-sm sm:grid-cols-2 sm:gap-0 sm:p-2">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-3 rounded-2xl border border-stone-200 bg-white p-3 shadow-sm sm:grid-cols-3 sm:gap-0 sm:p-2">
             {[
               { value: '+200', label: 'propiedades vendidas' },
+              { value: '< 60 días', label: 'tiempo medio de cierre' },
               { value: '4,8', label: 'en Google' },
             ].map((stat, idx) => (
               <div
                 key={stat.label}
                 className={`flex flex-col items-center justify-center rounded-xl px-6 py-5 text-center ${
-                  idx !== 1 ? 'sm:border-r sm:border-stone-200' : ''
+                  idx !== 2 ? 'sm:border-r sm:border-stone-200' : ''
                 }`}
               >
                 <p className="font-display text-3xl font-light tracking-tight text-stone-900 md:text-4xl">{stat.value}</p>
