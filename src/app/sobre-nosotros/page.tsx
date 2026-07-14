@@ -1,15 +1,18 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { AGENT, OFFICES } from '@/lib/contact'
-import { SERVICE_ITEMS } from '@/data/services'
+import { AGENT, LEGAL, OFFICES } from '@/lib/contact'
+import {
+  HOME_EXTRA_SERVICES,
+  PARTNER_SERVICES,
+  PRIMARY_SERVICES,
+  type ServiceItem,
+} from '@/data/services'
 import { TEAM_MEMBERS, TEAM_QUOTE } from '@/data/team'
 
-function HomeIcon() {
+function BankIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-5 w-5" aria-hidden="true">
-      <path d="M3 11.25 12 4l9 7.25" />
-      <path d="M5.25 10.5V20h13.5v-9.5" />
-      <path d="M9.75 20v-5.5h4.5V20" />
+      <path d="M3 10h18M5 10V20M9 10V20M15 10V20M19 10V20M2 20h20M12 4l8 6H4l8-6Z" />
     </svg>
   )
 }
@@ -22,10 +25,10 @@ function ScaleIcon() {
   )
 }
 
-function BankIcon() {
+function BoltIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-5 w-5" aria-hidden="true">
-      <path d="M3 10h18M5 10V20M9 10V20M15 10V20M19 10V20M2 20h20M12 4l8 6H4l8-6Z" />
+      <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />
     </svg>
   )
 }
@@ -40,12 +43,52 @@ function ClipboardIcon() {
   )
 }
 
-const serviceIcons = [HomeIcon, ScaleIcon, BankIcon, ClipboardIcon]
+function ShieldIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-5 w-5" aria-hidden="true">
+      <path d="M12 3 4 7v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V7l-8-4Z" />
+    </svg>
+  )
+}
 
-const featuredServices = SERVICE_ITEMS.slice(0, 4).map((service, index) => ({
-  ...service,
-  icon: serviceIcons[index] ?? HomeIcon,
-}))
+function HomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-5 w-5" aria-hidden="true">
+      <path d="M3 11.25 12 4l9 7.25" />
+      <path d="M5.25 10.5V20h13.5v-9.5" />
+      <path d="M9.75 20v-5.5h4.5V20" />
+    </svg>
+  )
+}
+
+const primaryIcons = [BankIcon, ScaleIcon, BoltIcon, ClipboardIcon]
+const partnerIcons = [BoltIcon, ShieldIcon]
+const homeIcons = [HomeIcon, HomeIcon, HomeIcon, HomeIcon]
+
+function ServiceCard({
+  service,
+  icon: Icon,
+}: {
+  service: ServiceItem
+  icon: typeof HomeIcon
+}) {
+  return (
+    <div className="group border border-stone-200 bg-white p-8 transition-colors duration-300 hover:border-brand-burgundy/30">
+      <span className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-sm border border-stone-200 text-stone-600 transition-colors group-hover:border-brand-burgundy/30 group-hover:text-brand-burgundy">
+        <Icon />
+      </span>
+      {service.partner && (
+        <p className="mb-2 text-[10px] font-light uppercase tracking-[0.16em] text-brand-burgundy">
+          {service.partner}
+        </p>
+      )}
+      <h3 className="mb-3 font-display text-xl font-light text-stone-900 transition-colors group-hover:text-brand-burgundy">
+        {service.title}
+      </h3>
+      <p className="text-sm font-light leading-relaxed text-stone-500">{service.desc}</p>
+    </div>
+  )
+}
 
 function TeamAvatar({ name, initials, photo }: { name: string; initials: string; photo?: string | null }) {
   if (photo) {
@@ -66,7 +109,6 @@ function TeamAvatar({ name, initials, photo }: { name: string; initials: string;
 export default function SobreNosotrosPage() {
   return (
     <div className="pt-[4.75rem] md:pt-24">
-      {/* Intro + historia */}
       <section className="border-b border-stone-200 px-6 py-16 md:px-10 md:py-24">
         <div className="mx-auto max-w-7xl">
           <nav className="mb-8 flex items-center gap-2 text-xs font-light text-stone-400">
@@ -93,13 +135,13 @@ export default function SobreNosotrosPage() {
             <div className="relative">
               <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
                 <Image
-                  src="/images/coria.jpg"
-                  alt={`Oficina ${AGENT.name} en Coria del Río`}
+                  src="/images/julio.jpg"
+                  alt={`${LEGAL.ownerName} — ${AGENT.name}`}
                   fill
-                  className="object-cover"
+                  className="object-cover object-top"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/50 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/45 via-transparent to-transparent" />
                 <p className="absolute bottom-5 left-5 text-sm font-light text-white/90">
                   {OFFICES.primary.label}, Coria del Río
                 </p>
@@ -136,39 +178,66 @@ export default function SobreNosotrosPage() {
         </div>
       </section>
 
-      {/* Servicios — 4 tarjetas */}
       <section className="bg-stone-50 px-6 py-20 md:px-10 md:py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-12 max-w-2xl">
-            <p className="mb-3 text-[10px] font-light uppercase tracking-[0.22em] text-brand-burgundy">
-              Lo que hacemos
-            </p>
-            <h2 className="font-display text-3xl font-light text-stone-900 md:text-4xl">Servicios inmobiliarios</h2>
-            <p className="mt-4 text-sm font-light leading-relaxed text-stone-500 md:text-base">
-              Cuatro áreas de trabajo con las que le acompañamos de principio a fin.
-            </p>
+        <div className="mx-auto max-w-7xl space-y-20">
+          <div>
+            <div className="mb-12 max-w-2xl">
+              <p className="mb-3 text-[10px] font-light uppercase tracking-[0.22em] text-brand-burgundy">
+                Más que una inmobiliaria
+              </p>
+              <h2 className="font-display text-3xl font-light text-stone-900 md:text-4xl">
+                Servicios inmobiliarios
+              </h2>
+              <p className="mt-4 text-sm font-light leading-relaxed text-stone-500 md:text-base">
+                Financiación, plusvalía, suministros y asesoramiento jurídico con un trato cercano y
+                profesional.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {PRIMARY_SERVICES.map((service, index) => (
+                <ServiceCard key={service.title} service={service} icon={primaryIcons[index] ?? HomeIcon} />
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {featuredServices.map((service) => (
-              <div
-                key={service.title}
-                className="group border border-stone-200 bg-white p-8 transition-colors duration-300 hover:border-brand-burgundy/30"
-              >
-                <span className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-sm border border-stone-200 text-stone-600 transition-colors group-hover:border-brand-burgundy/30 group-hover:text-brand-burgundy">
-                  <service.icon />
-                </span>
-                <h3 className="mb-3 font-display text-xl font-light text-stone-900 transition-colors group-hover:text-brand-burgundy">
-                  {service.title}
-                </h3>
-                <p className="text-sm font-light leading-relaxed text-stone-500">{service.desc}</p>
-              </div>
-            ))}
+          <div>
+            <div className="mb-10 max-w-2xl">
+              <p className="mb-3 text-[10px] font-light uppercase tracking-[0.22em] text-brand-burgundy">
+                Su garantía inmobiliaria
+              </p>
+              <h2 className="font-display text-2xl font-light text-stone-900 md:text-3xl">
+                Colaboradores de confianza
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {PARTNER_SERVICES.map((service, index) => (
+                <ServiceCard key={service.title} service={service} icon={partnerIcons[index] ?? HomeIcon} />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-10 max-w-2xl">
+              <p className="mb-3 text-[10px] font-light uppercase tracking-[0.22em] text-brand-burgundy">
+                Servicios extra
+              </p>
+              <h2 className="font-display text-2xl font-light text-stone-900 md:text-3xl">
+                Montaje y mantenimiento de su hogar
+              </h2>
+              <p className="mt-4 text-sm font-light leading-relaxed text-stone-500">
+                También le ayudamos con soluciones prácticas para ganar confort en su vivienda.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {HOME_EXTRA_SERVICES.map((service, index) => (
+                <ServiceCard key={service.title} service={service} icon={homeIcons[index] ?? HomeIcon} />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Equipo — placeholders para fotos */}
       <section className="border-t border-stone-200 px-6 py-20 md:px-10 md:py-24">
         <div className="mx-auto max-w-7xl">
           <blockquote className="border border-stone-200 bg-stone-50 px-8 py-10 md:px-12 md:py-12">
