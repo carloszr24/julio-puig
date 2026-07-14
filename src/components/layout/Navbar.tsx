@@ -71,7 +71,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto pl-5 pr-4 md:pl-12 md:pr-10">
         <div className={cn('flex w-full items-center', HEADER_HEIGHT_CLASS)}>
           <Link href="/" className="relative z-10 flex shrink-0 items-center py-2 md:py-2.5">
-            <SiteLogo priority />
+            <SiteLogo priority tone={transparent ? 'light' : 'dark'} />
           </Link>
 
           <div className="ml-auto hidden md:flex items-center gap-8 shrink-0 self-center">

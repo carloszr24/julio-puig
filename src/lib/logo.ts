@@ -1,6 +1,7 @@
 export const LOGO_SRC = '/images/julio-puig.png'
+export const LOGO_WHITE_SRC = '/images/julio-puig-blanco.png'
 
-/** Intrinsic dimensions of public/images/julio-puig.png (4916×3125) — used for aspect ratio only. */
+/** Intrinsic dimensions — same aspect ratio for both logo variants. */
 export const LOGO_RENDER = {
   width: 4916,
   height: 3125,
@@ -19,3 +20,5 @@ export const HEADER_HEIGHT_CLASS =
 
 export const HEADER_OFFSET_CLASS =
   'pt-[4.75rem] md:pt-24'
+
+export type LogoTone = 'light' | 'dark'

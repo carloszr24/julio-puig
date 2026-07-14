@@ -95,6 +95,10 @@
   }
 }
 
+.site-logo--swap-dark {
+  margin: 0 !important;
+}
+
 .site-logo-text {
   display: flex;
   flex-direction: column;
