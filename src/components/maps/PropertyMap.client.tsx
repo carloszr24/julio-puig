@@ -5,7 +5,14 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { cn } from '@/lib/utils'
 import { formatPrice } from '@/lib/utils'
-import { CORIA_DEL_RIO_CENTER, DEFAULT_MAP_ZOOM, configureLeafletIcons } from '@/lib/leaflet-client'
+import {
+  CORIA_DEL_RIO_CENTER,
+  DEFAULT_MAP_ZOOM,
+  MAP_TILE_ATTRIBUTION,
+  MAP_TILE_URL,
+  configureLeafletIcons,
+  createPropertyMarkerIcon,
+} from '@/lib/leaflet-client'
 import type { PropertyMapPoint } from '@/lib/property-map'
 
 type DraggableMarker = {
@@ -31,14 +38,16 @@ function escapeHtml(value: string) {
 
 function buildPopupHtml(point: PropertyMapPoint) {
   const image = point.imageUrl
-    ? `<img src="${escapeHtml(point.imageUrl)}" alt="" style="width:100%;height:96px;object-fit:cover;border-radius:4px;margin-bottom:8px" />`
+    ? `<div class="property-map-popup__image"><img src="${escapeHtml(point.imageUrl)}" alt="" /></div>`
     : ''
   return `
-    ${image}
-    <strong style="display:block;font-size:14px;margin-bottom:4px">${escapeHtml(point.title)}</strong>
-    <span style="display:block;font-size:13px;color:#601b2e;margin-bottom:6px">${escapeHtml(formatPrice(point.price, point.operation || 'venta'))}</span>
-    <span style="display:block;font-size:12px;color:#78716c;margin-bottom:8px">${escapeHtml(point.location)}</span>
-    <a href="/propiedades/${escapeHtml(point.id)}" style="font-size:12px;color:#601b2e;text-decoration:underline">Ver ficha</a>
+    <div class="property-map-popup__inner">
+      ${image}
+      <p class="property-map-popup__title">${escapeHtml(point.title)}</p>
+      <p class="property-map-popup__price">${escapeHtml(formatPrice(point.price, point.operation || 'venta'))}</p>
+      <p class="property-map-popup__location">${escapeHtml(point.location)}</p>
+      <a class="property-map-popup__link" href="/propiedades/${escapeHtml(point.id)}">Ver ficha</a>
+    </div>
   `
 }
 
@@ -54,11 +63,16 @@ export default function PropertyMap({ points = [], className, draggable = null }
 
     const map = L.map(containerRef.current, {
       scrollWheelZoom: false,
+      zoomControl: true,
+      attributionControl: true,
     }).setView(CORIA_DEL_RIO_CENTER, DEFAULT_MAP_ZOOM)
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    map.zoomControl.setPosition('topright')
+
+    L.tileLayer(MAP_TILE_URL, {
+      attribution: MAP_TILE_ATTRIBUTION,
+      maxZoom: 19,
+      subdomains: 'abcd',
     }).addTo(map)
 
     mapRef.current = map
@@ -81,42 +95,51 @@ export default function PropertyMap({ points = [], className, draggable = null }
     draggableMarkerRef.current?.remove()
     draggableMarkerRef.current = null
 
+    const markerIcon = createPropertyMarkerIcon()
+
     if (draggable) {
-      const marker = L.marker([draggable.latitude, draggable.longitude], { draggable: true }).addTo(map)
+      const marker = L.marker([draggable.latitude, draggable.longitude], {
+        draggable: true,
+        icon: markerIcon,
+      }).addTo(map)
       draggableMarkerRef.current = marker
       marker.on('dragend', () => {
         const position = marker.getLatLng()
         draggable.onMove(position.lat, position.lng)
       })
-      map.setView([draggable.latitude, draggable.longitude], 16)
+      map.setView([draggable.latitude, draggable.longitude], 16, { animate: false })
       return
     }
 
     if (points.length === 0) {
-      map.setView(CORIA_DEL_RIO_CENTER, DEFAULT_MAP_ZOOM)
+      map.setView(CORIA_DEL_RIO_CENTER, DEFAULT_MAP_ZOOM, { animate: false })
       return
     }
 
     const bounds = L.latLngBounds([])
     for (const point of points) {
-      const marker = L.marker([point.latitude, point.longitude])
-      marker.bindPopup(buildPopupHtml(point))
+      const marker = L.marker([point.latitude, point.longitude], { icon: markerIcon })
+      marker.bindPopup(buildPopupHtml(point), {
+        className: 'property-map-popup',
+        maxWidth: 260,
+        minWidth: 220,
+        closeButton: true,
+        autoPanPadding: [24, 24],
+      })
       marker.addTo(layer)
       bounds.extend([point.latitude, point.longitude])
     }
 
     if (points.length === 1) {
-      map.setView([points[0].latitude, points[0].longitude], 15)
+      map.setView([points[0].latitude, points[0].longitude], 15, { animate: false })
     } else {
-      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 })
+      map.fitBounds(bounds, { padding: [48, 48], maxZoom: 15, animate: false })
     }
   }, [points, draggable])
 
   return (
-    <div
-      ref={containerRef}
-      className={cn('w-full overflow-hidden rounded-sm border border-stone-200 bg-stone-100', className)}
-      style={{ minHeight: 280 }}
-    />
+    <div className={cn('property-map-shell', className)}>
+      <div ref={containerRef} className="property-map-canvas" />
+    </div>
   )
 }

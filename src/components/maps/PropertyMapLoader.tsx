@@ -19,16 +19,17 @@ export function PropertyMapSection({ points, className, title = 'Mapa' }: Props)
   if (points.length === 0) return null
 
   return (
-    <section className={cn('space-y-4', className)}>
-      <div>
-        <h2 className="font-display text-2xl font-light text-stone-900">{title}</h2>
-        <p className="mt-1 text-sm font-light text-stone-500">
+    <section className={cn('space-y-5', className)}>
+      <div className="border-b border-stone-200 pb-4">
+        <p className="text-[10px] uppercase tracking-[0.22em] text-brand-burgundy font-light mb-2">Ubicación</p>
+        <h2 className="font-display text-2xl md:text-3xl font-light text-stone-900">{title}</h2>
+        <p className="mt-2 text-sm font-light text-stone-500">
           {points.length === 1
-            ? 'Ubicación exacta de la propiedad'
-            : `${points.length} propiedades en el mapa`}
+            ? 'Consulte la ubicación exacta de la propiedad'
+            : `${points.length} propiedades disponibles en el mapa`}
         </p>
       </div>
-      <PropertyMap points={points} className="h-[320px] md:h-[420px]" />
+      <PropertyMap points={points} className="h-[300px] md:h-[400px]" />
     </section>
   )
 }
