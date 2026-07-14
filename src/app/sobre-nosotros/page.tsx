@@ -43,14 +43,6 @@ function ClipboardIcon() {
   )
 }
 
-function ShieldIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-5 w-5" aria-hidden="true">
-      <path d="M12 3 4 7v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V7l-8-4Z" />
-    </svg>
-  )
-}
-
 function HomeIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-5 w-5" aria-hidden="true">
@@ -62,7 +54,6 @@ function HomeIcon() {
 }
 
 const primaryIcons = [BankIcon, ScaleIcon, BoltIcon, ClipboardIcon]
-const partnerIcons = [BoltIcon, ShieldIcon]
 const homeIcons = [HomeIcon, HomeIcon, HomeIcon, HomeIcon]
 
 function ServiceCard({
@@ -70,18 +61,25 @@ function ServiceCard({
   icon: Icon,
 }: {
   service: ServiceItem
-  icon: typeof HomeIcon
+  icon?: typeof HomeIcon
 }) {
   return (
     <div className="group border border-stone-200 bg-white p-8 transition-colors duration-300 hover:border-brand-burgundy/30">
-      <span className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-sm border border-stone-200 text-stone-600 transition-colors group-hover:border-brand-burgundy/30 group-hover:text-brand-burgundy">
-        <Icon />
-      </span>
-      {service.partner && (
-        <p className="mb-2 text-[10px] font-light uppercase tracking-[0.16em] text-brand-burgundy">
-          {service.partner}
-        </p>
-      )}
+      {service.partnerLogo ? (
+        <div className="mb-6 flex h-12 items-center">
+          <Image
+            src={service.partnerLogo}
+            alt={service.partner ?? service.title}
+            width={160}
+            height={48}
+            className="h-10 w-auto max-w-[9.5rem] object-contain object-left"
+          />
+        </div>
+      ) : Icon ? (
+        <span className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-sm border border-stone-200 text-stone-600 transition-colors group-hover:border-brand-burgundy/30 group-hover:text-brand-burgundy">
+          <Icon />
+        </span>
+      ) : null}
       <h3 className="mb-3 font-display text-xl font-light text-stone-900 transition-colors group-hover:text-brand-burgundy">
         {service.title}
       </h3>
@@ -211,8 +209,8 @@ export default function SobreNosotrosPage() {
               </h2>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {PARTNER_SERVICES.map((service, index) => (
-                <ServiceCard key={service.title} service={service} icon={partnerIcons[index] ?? HomeIcon} />
+              {PARTNER_SERVICES.map((service) => (
+                <ServiceCard key={service.title} service={service} />
               ))}
             </div>
           </div>

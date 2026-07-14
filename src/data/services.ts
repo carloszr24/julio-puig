@@ -2,6 +2,7 @@ export type ServiceItem = {
   title: string
   desc: string
   partner?: string
+  partnerLogo?: string
 }
 
 /** Tarjetas principales — «Más que una inmobiliaria». */
@@ -30,11 +31,13 @@ export const PARTNER_SERVICES: ServiceItem[] = [
     title: 'Cambios de titularidad',
     desc: 'Gestión de cambios de titularidad de suministros energéticos con el respaldo de Iberdrola.',
     partner: 'Iberdrola',
+    partnerLogo: '/images/iberdrola.webp',
   },
   {
     title: 'Contratación de alarmas',
     desc: 'Asesoramiento y contratación de sistemas de alarma para su vivienda con Securitas Direct.',
     partner: 'Securitas Direct',
+    partnerLogo: '/images/securitas.png',
   },
 ]
 
