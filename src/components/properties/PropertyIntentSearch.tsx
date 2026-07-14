@@ -23,9 +23,17 @@ type Props = {
   mode: 'buy' | 'sell'
   mapPoints?: PropertyMapPoint[]
   onSellContextChange?: (ctx: { location: string; propertyType: string }) => void
+  variant?: 'page' | 'modal'
+  onClose?: () => void
 }
 
-export function PropertyIntentSearch({ mode, mapPoints = [], onSellContextChange }: Props) {
+export function PropertyIntentSearch({
+  mode,
+  mapPoints = [],
+  onSellContextChange,
+  variant = 'page',
+  onClose,
+}: Props) {
   const router = useRouter()
   const [location, setLocation] = useState('')
   const [focusCenter, setFocusCenter] = useState<{ latitude: number; longitude: number; zoom?: number } | null>(
@@ -36,6 +44,24 @@ export function PropertyIntentSearch({ mode, mapPoints = [], onSellContextChange
   const [bedrooms, setBedrooms] = useState<string>('')
 
   const isBuy = mode === 'buy'
+  const isModal = variant === 'modal'
+
+  const searchHref = useMemo(() => {
+    const params = new URLSearchParams()
+    params.set('operation', 'venta')
+    if (propertyType) params.set('type', propertyType)
+    if (bedrooms) params.set('bedrooms', bedrooms)
+    return `/propiedades?${params.toString()}`
+  }, [propertyType, bedrooms])
+
+  const navigateAway = (href: string) => {
+    onClose?.()
+    router.push(href)
+  }
+
+  const handleSearch = () => {
+    navigateAway(searchHref)
+  }
 
   const applyLocation = (item: LocationSuggestion) => {
     setFocusCenter({ latitude: item.latitude, longitude: item.longitude, zoom: 14 })
@@ -66,22 +92,10 @@ export function PropertyIntentSearch({ mode, mapPoints = [], onSellContextChange
     }
   }
 
-  const searchHref = useMemo(() => {
-    const params = new URLSearchParams()
-    params.set('operation', 'venta')
-    if (propertyType) params.set('type', propertyType)
-    if (bedrooms) params.set('bedrooms', bedrooms)
-    return `/propiedades?${params.toString()}`
-  }, [propertyType, bedrooms])
-
-  const handleSearch = () => {
-    router.push(searchHref)
-  }
-
   return (
-    <div className="mx-auto max-w-7xl">
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-12">
-        <div className="space-y-8 lg:col-span-2">
+    <div className={isModal ? 'w-full' : 'mx-auto max-w-7xl'}>
+      <div className={cn('grid grid-cols-1 gap-10', isModal ? 'lg:grid-cols-2 lg:gap-8' : 'lg:grid-cols-5 lg:gap-12')}>
+        <div className={cn('space-y-8', isModal ? '' : 'lg:col-span-2')}>
           <div>
             <label className="mb-2 block text-[10px] font-light uppercase tracking-[0.18em] text-stone-500">
               {isBuy ? '¿Dónde busca?' : '¿Dónde está la vivienda?'}
@@ -153,6 +167,7 @@ export function PropertyIntentSearch({ mode, mapPoints = [], onSellContextChange
             ) : null}
             <Link
               href={isBuy ? '/propiedades' : '/contacto'}
+              onClick={() => onClose?.()}
               className={cn(
                 'inline-flex w-full items-center justify-center border border-stone-300 py-3.5 text-xs font-light uppercase tracking-[0.1em] text-stone-600 transition-colors hover:border-stone-900 hover:text-stone-900',
                 !isBuy && 'btn-primary border-transparent text-white hover:text-white'
@@ -163,9 +178,9 @@ export function PropertyIntentSearch({ mode, mapPoints = [], onSellContextChange
           </div>
         </div>
 
-        <div className="lg:col-span-3">
+        <div className={isModal ? '' : 'lg:col-span-3'}>
           <PropertyMap
-            className="h-[320px] md:h-[420px]"
+            className={isModal ? 'h-[240px] md:h-[280px]' : 'h-[320px] md:h-[420px]'}
             points={isBuy ? mapPoints : []}
             focusCenter={isBuy ? focusCenter : null}
             draggable={

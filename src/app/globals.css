@@ -183,6 +183,14 @@
   animation: leadModalEnter 0.28s ease-out forwards;
 }
 
+.lead-modal--wide {
+  width: min(1040px, calc(100vw - 1.5rem));
+}
+
+.lead-modal-body {
+  padding: 0 0.75rem 0.5rem;
+}
+
 @keyframes leadModalEnter {
   from {
     opacity: 0;

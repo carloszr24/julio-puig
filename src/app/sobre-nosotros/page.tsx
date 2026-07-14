@@ -266,7 +266,7 @@ export default function SobreNosotrosPage() {
             <div>
               <h3 className="font-display text-2xl font-light text-stone-900">¿Hablamos?</h3>
               <p className="mt-2 max-w-md text-sm font-light leading-relaxed text-stone-500">
-                Cuéntenos su caso. La primera conversación es gratuita y sin compromiso.
+                Cuéntenos qué necesita y le atenderemos.
               </p>
             </div>
             <Link

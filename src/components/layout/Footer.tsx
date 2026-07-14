@@ -14,7 +14,7 @@ import { SiteLogo } from '@/components/SiteLogo'
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-brand-burgundy-dark/30 bg-brand-burgundy text-stone-300">
+    <footer className="mt-24 border-t border-brand-burgundy-light/40 bg-brand-burgundy-light text-stone-300">
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">

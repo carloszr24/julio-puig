@@ -17,7 +17,7 @@ const display = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
-  title: 'Julio Puig Real Estate | Agencia inmobiliaria',
+  title: 'Julio Puig | Agencia inmobiliaria',
   description:
     'Compra, venta y alquiler en Coria del Río y provincia de Sevilla. Servicio personalizado y asesoramiento integral.',
   keywords:

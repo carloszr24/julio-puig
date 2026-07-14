@@ -219,7 +219,7 @@ function buildEmailContent(record: LeadNotificationPayload) {
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:560px;margin:0 auto">
       <tr>
         <td style="background:${BRAND_BURGUNDY};border-radius:12px 12px 0 0;padding:20px 24px">
-          <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.82)">Julio Puig Real Estate</div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.82)">Julio Puig</div>
           <div style="margin-top:8px;font-size:22px;font-weight:700;line-height:1.25;color:#ffffff">${escapeHtml(headline)}</div>
         </td>
       </tr>
@@ -275,7 +275,7 @@ export async function sendLeadNotificationEmail(
   }
 
   const from =
-    process.env.RESEND_FROM_EMAIL?.trim() || 'Julio Puig Real Estate <onboarding@resend.dev>'
+    process.env.RESEND_FROM_EMAIL?.trim() || 'Julio Puig <onboarding@resend.dev>'
 
   const { text, html, subject } = buildEmailContent(record)
   const body: Record<string, unknown> = {

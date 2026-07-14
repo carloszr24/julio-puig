@@ -1,7 +1,7 @@
 export const CONTACT_EMAIL = ''
 
 export const AGENT = {
-  name: 'Julio Puig Real Estate',
+  name: 'Julio Puig',
   title: 'Agencia inmobiliaria',
   tagline:
     'Experiencia y dedicación en compra, venta y alquiler con un trato personalizado y profesional.',

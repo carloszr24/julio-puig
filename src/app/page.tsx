@@ -1,9 +1,11 @@
 import Link from 'next/link'
-import { getFeaturedPropertiesForHome } from '@/lib/properties-store'
+import { getFeaturedPropertiesForHome, getPublicProperties } from '@/lib/properties-store'
+import { toPropertyMapPoints } from '@/lib/property-map'
 import { ReviewsCarousel } from '@/components/home/ReviewsCarousel'
 import { FeaturedPropertiesGrid } from '@/components/home/FeaturedPropertiesGrid'
 import { HeroCarousel } from '@/components/home/HeroCarousel'
 import { ScrollHint } from '@/components/home/ScrollHint'
+import { HeroActions } from '@/components/home/HeroActions'
 import { BrandName } from '@/components/BrandName'
 
 export const dynamic = 'force-dynamic'
@@ -46,6 +48,7 @@ function ClipboardIcon() {
 
 export default async function HomePage() {
   const featured = await getFeaturedPropertiesForHome()
+  const mapPoints = toPropertyMapPoints(await getPublicProperties())
 
   return (
     <>
@@ -57,41 +60,19 @@ export default async function HomePage() {
 
         <div className="relative z-10 flex flex-1 w-full items-center justify-center px-4 min-[400px]:px-6 -translate-y-8 md:-translate-y-4">
           <div className="text-center max-w-4xl mx-auto w-full">
-            <p
-              className="text-[10px] uppercase tracking-[0.22em] text-stone-200/90 mb-5 font-light animate-fade-up"
-              style={{ animationDelay: '0s', opacity: 0, animationFillMode: 'forwards' }}
-            >
-              Julio Puig Real Estate
-            </p>
             <h1 className="font-display text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.35)] text-balance text-[clamp(2rem,5.5vw+0.5rem,3.75rem)] leading-[1.14] mb-6 animate-fade-up font-light">
               Compre o venda su vivienda
               <span className="hidden md:inline"> </span>
               <br className="md:hidden" aria-hidden="true" />
-              con la <span className="text-rose-100/95 italic">serenidad</span> que merece
+              con la <span className="text-rose-100/95 italic">tranquilidad</span> que merece
             </h1>
             <p
               className="text-stone-200/95 text-base sm:text-lg font-light max-w-[min(100%,24rem)] sm:max-w-xl mx-auto mb-9 leading-relaxed text-pretty animate-fade-up"
               style={{ animationDelay: '0.1s', opacity: 0, animationFillMode: 'forwards' }}
             >
-              Le acompañamos en cada paso con un servicio personalizado, discreto y adaptado a sus necesidades.
+              Le acompañamos en cada paso con un servicio personalizado y adaptado a sus necesidades.
             </p>
-            <div
-              className="flex w-full max-w-xl mx-auto flex-col sm:flex-row gap-3 sm:gap-4 animate-fade-up md:-translate-y-2"
-              style={{ animationDelay: '0.2s', opacity: 0, animationFillMode: 'forwards' }}
-            >
-              <Link
-                href="/comprar"
-                className="btn-gold w-full sm:flex-1 sm:min-w-0 min-h-[3rem] md:min-h-[3.1rem] px-8 py-3.5 text-xs md:text-sm text-center border border-transparent box-border"
-              >
-                Deseo comprar
-              </Link>
-              <Link
-                href="/vender"
-                className="inline-flex w-full sm:flex-1 sm:min-w-0 min-h-[3rem] md:min-h-[3.1rem] items-center justify-center px-8 py-3.5 text-xs md:text-sm tracking-[0.06em] uppercase font-light border border-white/80 text-white box-border hover:bg-white hover:text-brand-burgundy transition-colors duration-200"
-              >
-                Deseo vender
-              </Link>
-            </div>
+            <HeroActions mapPoints={mapPoints} />
           </div>
         </div>
 
@@ -101,8 +82,7 @@ export default async function HomePage() {
       <section className="bg-brand-burgundy py-20 md:py-24 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
           <div className="mb-12 text-center">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-stone-300/80 font-light">Servicio completo</p>
-            <h2 className="mt-4 font-display text-3xl text-white md:text-[2.35rem] font-light leading-snug">
+            <h2 className="font-display text-3xl text-white md:text-[2.35rem] font-light leading-snug">
               Todo lo que necesita para operar con confianza
             </h2>
             <p className="mt-4 text-sm text-stone-200/80 max-w-2xl mx-auto leading-relaxed font-light">

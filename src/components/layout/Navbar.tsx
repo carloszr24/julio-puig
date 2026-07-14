@@ -17,7 +17,7 @@ const links = [
 ]
 
 const navLinkClass =
-  'inline-flex items-center leading-none text-[10px] font-light uppercase tracking-[0.16em] transition-colors duration-200'
+  'inline-flex items-center leading-none text-xs font-light uppercase tracking-[0.16em] transition-colors duration-200'
 
 export function Navbar() {
   const pathname = usePathname()
@@ -175,7 +175,7 @@ export function Navbar() {
             <ValoracionGratuitaModal
               triggerLabel="Valoración gratuita"
               triggerClassName={cn(
-                'inline-flex shrink-0 whitespace-nowrap rounded-sm text-[10px] uppercase tracking-[0.12em] font-light px-5 py-2.5',
+                'inline-flex shrink-0 whitespace-nowrap rounded-sm text-xs uppercase tracking-[0.12em] font-light px-5 py-2.5',
                 transparent
                   ? 'inline-flex items-center justify-center border border-white/70 text-white hover:bg-white hover:text-brand-burgundy transition-colors duration-200'
                   : 'btn-primary'
